@@ -1,20 +1,60 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import './styles.css'
 
 export default function App() {
+  const [open, setOpen] = useState(false)
+
+  // close drawer on route change via hashchange/popstate
+  useEffect(()=>{
+    const close = () => setOpen(false)
+    window.addEventListener('hashchange', close)
+    window.addEventListener('popstate', close)
+    return () => {
+      window.removeEventListener('hashchange', close)
+      window.removeEventListener('popstate', close)
+    }
+  }, [])
+
   return (
     <div className="shell">
-      <aside className="sidebar">
-        <h1>Season Diary</h1>
-        <nav>
-          <NavLink to="/" end>Dashboard</NavLink>
-          <NavLink to="/tests">Testing Log</NavLink>
-          <NavLink to="/themes">Focus & Themes</NavLink>
-          <NavLink to="/plan">6-Week Plan</NavLink>
-          <NavLink to="/data">Data</NavLink>
-        </nav>
+      {/* Top bar (mobile) */}
+      <header className="topbar">
+        <button
+          className="menu-btn"
+          aria-label="Open menu"
+          aria-expanded={open}
+          onClick={() => setOpen(true)}
+        >☰</button>
+        <h1 className="brand">Season Diary</h1>
+      </header>
+
+      {/* Sidebar / Drawer */}
+      <aside className={open ? 'sidebar open' : 'sidebar'} aria-hidden={!open}>
+        <div className="sidebar-inner">
+          <div className="sidebar-header">
+            <h2>Season Diary</h2>
+            <button
+              className="close-btn"
+              aria-label="Close menu"
+              onClick={() => setOpen(false)}
+            >✕</button>
+          </div>
+          <nav onClick={()=>setOpen(false)}>
+            <NavLink to="/" end>Dashboard</NavLink>
+            <NavLink to="/tests">Testing Log</NavLink>
+            <NavLink to="/themes">Focus & Themes</NavLink>
+            <NavLink to="/plan">6-Week Plan</NavLink>
+            <NavLink to="/data">Data</NavLink>
+          </nav>
+          <p className="small footnote">Tip: use the Data page to paste/upload JSON after each test day.</p>
+        </div>
       </aside>
+
+      {/* Overlay for drawer */}
+      {open && <div className="overlay" onClick={()=>setOpen(false)}></div>}
+
+      {/* Main content */}
       <main className="main">
         <Outlet />
       </main>

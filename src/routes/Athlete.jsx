@@ -14,7 +14,7 @@ export default function Athlete(){
       </div>
       <div className="card">
         <h3>Testing History</h3>
-        <table className="table">
+        <div className="table-wrap"><table className="table">
           <thead><tr><th>Date</th><th>Test</th><th>Time</th><th>Split</th><th>Rate</th></tr></thead>
           <tbody>
             {a.tests.map((t,i)=>(
@@ -27,7 +27,7 @@ export default function Athlete(){
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
         <p className="small"><Link to="/">← Back to Dashboard</Link></p>
       </div>
     </div>

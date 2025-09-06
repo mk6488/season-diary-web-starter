@@ -7,7 +7,7 @@ export default function Tests(){
   return (
     <div className="card">
       <h2>Testing Log</h2>
-      <table className="table">
+      <div className="table-wrap"><table className="table">
         <thead><tr><th>Date</th><th>Athlete</th><th>Test</th><th>Time</th><th>Split</th><th>Rate</th></tr></thead>
         <tbody>
           {rows.map((r,i)=>(
@@ -21,7 +21,7 @@ export default function Tests(){
             </tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </div>
   )
 }

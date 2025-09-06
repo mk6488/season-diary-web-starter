@@ -17,7 +17,7 @@ export default function Dashboard(){
     <div className="grid">
       <div className="card">
         <h2>Squad Overview</h2>
-        <table className="table">
+        <div className="table-wrap"><table className="table">
           <thead><tr><th>Athlete</th><th>Group</th><th>Experience</th><th>Focus</th></tr></thead>
           <tbody>
             {athletes.map(a=>(
@@ -29,7 +29,7 @@ export default function Dashboard(){
               </tr>
             ))}
           </tbody>
-        </table>
+        </table></div>
       </div>
       <div className="card">
         <h2>How to use</h2>

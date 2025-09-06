@@ -40,7 +40,7 @@ export default function Data(){
         onChange={e=>setText(e.target.value)}
         style={{width:'100%', minHeight:'420px', fontFamily:'ui-monospace'}}
       />
-      <div style={{display:'flex', gap:8, marginTop:8}}>
+      <div style={{display:'flex', gap:8, marginTop:8, flexWrap:'wrap'}}>
         <button onClick={onSave}>Save</button>
         <button onClick={onReset}>Reset to sample</button>
         <button onClick={onDownload}>Download JSON</button>

@@ -14,12 +14,17 @@ const serialise = obj => JSON.stringify(obj);
 export function loadData(){ return currentData; }
 export function getAthletes(){ return loadData().athletes }
 export function getAthlete(id){ return loadData().athletes.find(a=>a.id===id) }
+let memo = { key:'', rows:[] };
 export function getTests(){
+  const data = loadData();
+  const key = serialise(data);
+  if (memo.key === key) return memo.rows;
   const rows=[];
-  for(const a of loadData().athletes){
+  for(const a of data.athletes){
     for(const t of a.tests){ rows.push({ athlete:a.name, id:a.id, ...t }) }
   }
-  return rows.sort((a,b)=> (a.date<b.date?1:-1));
+  memo = { key, rows: rows.sort((a,b)=> (a.date<b.date?1:-1)) };
+  return memo.rows;
 }
 
 // On app load: fetch Firestore. If data changed vs last session, do one reload.

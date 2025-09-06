@@ -6,9 +6,23 @@
   --line:#e5e7eb;      /* borders */
 }
 
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0b1220;
+    --panel:#0f172a;
+    --ink:#e2e8f0;
+    --ink-2:#cbd5e1;
+    --line:#1e293b;
+  }
+}
+
 *{box-sizing:border-box}
 html,body,#root{height:100%}
 body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--ink-2)}
+
+/* Skip link */
+.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{left:12px;top:12px;width:auto;height:auto;background:#0b1e3a;color:#fff;padding:8px 10px;border-radius:8px;z-index:100}
 
 /* --- Layout (desktop first) --- */
 .shell{
@@ -116,6 +130,15 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
 @media (prefers-reduced-motion: reduce){
   .sidebar{transition:none}
 }
+
+/* Command palette */
+.cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:70;display:flex;align-items:flex-start;justify-content:center;padding-top:10vh}
+.cmd{background:var(--panel);color:var(--ink);width:min(720px,92vw);border-radius:12px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.cmd input{width:100%;padding:12px 14px;border:0;border-bottom:1px solid var(--line);font-size:16px;outline:none;background:transparent;color:inherit}
+.cmd-actions{display:flex;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line)}
+.cmd-list{list-style:none;margin:0;padding:0;max-height:50vh;overflow:auto}
+.cmd-list li button{width:100%;text-align:left;padding:10px 12px;border:0;background:transparent;display:flex;gap:8px;justify-content:space-between;color:inherit}
+.cmd-label{font-weight:600}
 
 @media (max-width: 380px){
   .table{min-width:500px}

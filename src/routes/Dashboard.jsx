@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { getAthletes } from '../data/useData'
+import { useFilters } from '../data/filters'
 
 function FocusTag({focus}){
   const cls = focus.includes('Endurance') && !focus.includes('Technique') ? 'endurance'
@@ -12,11 +13,35 @@ function FocusTag({focus}){
 }
 
 export default function Dashboard(){
+  const { focus, setFocus, query, setQuery, clear } = useFilters()
   const athletes = getAthletes()
   .slice() // don’t mutate original
   .sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }))
+  .filter(a => (focus ? a.focus === focus : true))
+  .filter(a => (query ? (a.name.toLowerCase().includes(query.toLowerCase()) || a.group.toLowerCase().includes(query.toLowerCase())) : true))
   return (
     <div className="grid">
+      <div className="card">
+        <h2>Overview</h2>
+        <div className="kpis" style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(160px,1fr))',gap:12}}>
+          <div className="card" style={{margin:0,padding:12}}>
+            <div className="small">Athletes</div>
+            <div style={{fontSize:22,fontWeight:700}}>{athletes.length}</div>
+          </div>
+          <div className="card" style={{margin:0,padding:12}}>
+            <div className="small">Focus groups</div>
+            <div style={{fontSize:22,fontWeight:700}}>{new Set(getAthletes().map(a=>a.focus)).size}</div>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:8,marginTop:12,flexWrap:'wrap'}}>
+          <input placeholder="Filter by name/group" value={query} onChange={e=>setQuery(e.target.value)} />
+          <button className={focus===''? 'tag active':'tag'} onClick={()=>setFocus('')}>All</button>
+          {Array.from(new Set(getAthletes().map(a=>a.focus))).map(f=>(
+            <button key={f} className={focus===f? 'tag active':'tag'} onClick={()=>setFocus(f)}>{f}</button>
+          ))}
+          {(focus || query) && <button className="tag" onClick={clear}>Clear</button>}
+        </div>
+      </div>
       <div className="card">
         <h2>Squad Overview</h2>
         <div className="table-wrap"><table className="table">

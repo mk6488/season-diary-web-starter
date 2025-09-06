@@ -3,6 +3,8 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ensureRemote } from '../data/useData';
 import { CURRENT_SEASON_ID } from '../data/constants';
 import './styles.css';
+import { FiltersProvider } from '../data/filters';
+import CommandPalette from '../components/CommandPalette.jsx';
 
 // in App.jsx
 function readSyncInfo(){
@@ -100,6 +102,7 @@ export default function App() {
 
   return (
     <div className="shell">
+      <a href="#main" className="skip-link">Skip to content</a>
       {/* Top bar (mobile) */}
       <header className="topbar">
         <button
@@ -149,11 +152,14 @@ export default function App() {
       {open && <div className="overlay" aria-hidden="true" onClick={() => setOpen(false)} />}
 
       {/* Main content */}
-      <main className="main">
+      <main id="main" className="main">
         {toast && (
           <div className="toast" role="status" aria-live="polite">{toast}</div>
         )}
-        <Outlet />
+        <FiltersProvider>
+          <CommandPalette />
+          <Outlet />
+        </FiltersProvider>
       </main>
     </div>
   );

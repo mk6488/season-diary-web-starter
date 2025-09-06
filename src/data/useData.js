@@ -21,7 +21,7 @@ export function getTests(){
   if (memo.key === key) return memo.rows;
   const rows=[];
   for(const a of data.athletes){
-    for(const t of a.tests){ rows.push({ athlete:a.name, id:a.id, ...t }) }
+    for(const t of a.tests){ rows.push({ athlete:a.name, id:a.id, focus:a.focus, ...t }) }
   }
   memo = { key, rows: rows.sort((a,b)=> (a.date<b.date?1:-1)) };
   return memo.rows;

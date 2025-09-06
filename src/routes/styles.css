@@ -66,6 +66,9 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
 .table th .th-sort{background:transparent;border:0;padding:0;margin:0;color:inherit;font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
 .table th .sort-caret{font-size:12px;opacity:.7}
 
+/* PR highlight */
+tr.pr td{background:linear-gradient(90deg, rgba(16,185,129,.12), transparent)}
+
 /* Tags */
 .tag{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #d1d5db;font-size:12px}
 .tag.endurance{background:#e7f5ff;border-color:#a5d8ff}
@@ -145,4 +148,12 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
 @media (max-width: 380px){
   .table{min-width:500px}
   .menu-btn{padding:6px 8px}
+}
+
+/* Print styles */
+@media print{
+  .topbar,.sidebar,.overlay,.menu-btn,.close-btn,.toast{display:none !important}
+  .main{padding:0;background:#fff}
+  .card{box-shadow:none;border:0}
+  a{text-decoration:none;color:#000}
 }

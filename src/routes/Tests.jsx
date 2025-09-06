@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getTests } from '../data/useData'
 import { useFilters } from '../data/filters.jsx'
+import { parseTimeToSeconds, formatDeltaSeconds } from '../data/time'
 
 export default function Tests(){
   const { focus } = useFilters()
@@ -76,16 +77,27 @@ export default function Tests(){
           </tr>
         </thead>
         <tbody>
-          {rows.map((r,i)=>(
-            <tr key={`${r.id}-${r.date}-${r.type}`}>
-              <td className="mono">{r.date}</td>
-              <td><Link to={`/athlete/${r.id}`}>{r.athlete}</Link></td>
-              <td>{r.type}</td>
-              <td className="mono">{r.time}</td>
-              <td className="mono">{r.split}</td>
-              <td className="mono">{r.rate ?? '-'}</td>
-            </tr>
-          ))}
+          {rows.map((r,i)=>{
+            // delta vs previous occurrence of the same test type for same athlete
+            const prevIndex = baseRows.findIndex(x => x.id===r.id && x.type===r.type && new Date(x.date) < new Date(r.date))
+            const prev = prevIndex >= 0 ? baseRows[prevIndex] : null
+            const currSec = parseTimeToSeconds(r.time)
+            const prevSec = parseTimeToSeconds(prev?.time)
+            const delta = Number.isFinite(currSec) && Number.isFinite(prevSec) ? currSec - prevSec : NaN
+            return (
+              <tr key={`${r.id}-${r.date}-${r.type}`}>
+                <td className="mono">{r.date}</td>
+                <td><Link to={`/athlete/${r.id}`}>{r.athlete}</Link></td>
+                <td>{r.type}</td>
+                <td className="mono">{r.time}</td>
+                <td className="mono" style={{color: Number.isFinite(delta) ? (delta<0?'#059669':delta>0?'#b91c1c':'inherit'):'inherit'}}>
+                  {Number.isFinite(delta) ? (delta<0? '−' : '+') + formatDeltaSeconds(delta) : '-'}
+                </td>
+                <td className="mono">{r.split}</td>
+                <td className="mono">{r.rate ?? '-'}</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table></div>
       <div style={{display:'flex',gap:8,marginTop:8}}>

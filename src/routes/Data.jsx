@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { publishSeason, fetchRemoteSeason } from '../data/remote';
+import { CURRENT_SEASON_ID } from '../data/constants';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
@@ -18,7 +19,7 @@ export default function Data(){
   useEffect(() => {
     (async () => {
       try{
-        const remote = await fetchRemoteSeason('2025');
+        const remote = await fetchRemoteSeason(CURRENT_SEASON_ID);
         const parsed = remote?.athletes ? remote
                      : remote?.json ? JSON.parse(remote.json)
                      : { athletes: [] };
@@ -35,7 +36,7 @@ export default function Data(){
       const json = JSON.parse(text);
       if (!Array.isArray(json.athletes)) throw new Error('JSON must be { "athletes": [...] }');
       if (!user) throw new Error('Please sign in first.');
-      await publishSeason('2025', json);
+      await publishSeason(CURRENT_SEASON_ID, json);
       setMsg('Published to Firestore ✓ — everyone will see this after reload.');
     }catch(e){
       setMsg('Publish error: ' + e.message);
@@ -51,7 +52,19 @@ export default function Data(){
   }
   function onUpload(e){
     const f = e.target.files?.[0]; if(!f) return;
-    const r = new FileReader(); r.onload = () => setText(String(r.result)); r.readAsText(f);
+    const r = new FileReader();
+    r.onload = () => {
+      try{
+        const raw = String(r.result);
+        const parsed = JSON.parse(raw);
+        setText(JSON.stringify(parsed, null, 2));
+        setMsg('Upload loaded ✓');
+      }catch(err){
+        setText(String(r.result));
+        setMsg('Upload error: invalid JSON');
+      }
+    };
+    r.readAsText(f);
   }
 
   async function onLogin(e){

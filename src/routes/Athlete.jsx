@@ -21,7 +21,7 @@ export default function Athlete(){
             <thead><tr><th>Date</th><th>Test</th><th>Time</th><th>Split</th><th>Rate</th></tr></thead>
             <tbody>
               {a.tests.map((t,i)=>(
-                <tr key={i}>
+                <tr key={`${a.id}-${t.date}-${t.type}`}>
                   <td className="mono">{t.date}</td>
                   <td>{t.type}</td>
                   <td className="mono">{t.time}</td>

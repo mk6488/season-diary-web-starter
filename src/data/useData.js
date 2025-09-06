@@ -1,5 +1,6 @@
 import sample from './sample.json';          // used only as a temporary placeholder
 import { fetchRemoteSeason } from './remote';
+import { CURRENT_SEASON_ID } from './constants';
 
 let currentData = sample;                     // in-memory only (no localStorage)
 const SESSION_HASH_KEY = 'seasonDiaryHash';   // session-only guards (not your data)
@@ -22,7 +23,7 @@ export function getTests(){
 
 // On app load: fetch Firestore. If data changed vs last session, do one reload.
 // Either way, set currentData = remote so the UI shows cloud data.
-export async function ensureRemote(seasonId='2025'){
+export async function ensureRemote(seasonId=CURRENT_SEASON_ID){
   try{
     const remote = await fetchRemoteSeason(seasonId);
     if (!remote) return;

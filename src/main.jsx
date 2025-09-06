@@ -8,6 +8,7 @@ import Tests from './routes/Tests.jsx'
 import Themes from './routes/Themes.jsx'
 import Plan from './routes/Plan.jsx'
 import Data from './routes/Data.jsx'
+import NotFound from './routes/NotFound.jsx'
 
 const router = createBrowserRouter([
   { path: '/', element: <App />,
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { path: 'themes', element: <Themes /> },
       { path: 'plan', element: <Plan /> },
       { path: 'data', element: <Data /> },
+      { path: '*', element: <NotFound /> },
     ]
   }
 ])

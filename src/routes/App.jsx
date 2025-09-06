@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ensureRemote } from '../data/useData';
+import { CURRENT_SEASON_ID } from '../data/constants';
 import './styles.css';
 
 // in App.jsx
 function readSyncInfo(){
   const atRaw = sessionStorage.getItem('seasonDiaryLastRemoteAt');
-  return atRaw ? `Cloud sync ✓ • ${new Date(Number(atRaw)).toLocaleString()}` : 'Cloud data';
+  return atRaw
+    ? { source: 'cloud', at: Number(atRaw) }
+    : { source: 'local', at: null };
 }
 
 
@@ -16,7 +19,7 @@ export default function App() {
   const location = useLocation();
 
   // Fetch central data once; ensureRemote reloads the page only if data changed
-  useEffect(() => { ensureRemote('2025'); }, []);
+  useEffect(() => { ensureRemote(CURRENT_SEASON_ID); }, []);
 
   // Close drawer when route changes
   useEffect(() => { setOpen(false); }, [location]);

@@ -11,7 +11,7 @@ export default function Tests(){
         <thead><tr><th>Date</th><th>Athlete</th><th>Test</th><th>Time</th><th>Split</th><th>Rate</th></tr></thead>
         <tbody>
           {rows.map((r,i)=>(
-            <tr key={i}>
+            <tr key={`${r.id}-${r.date}-${r.type}`}>
               <td className="mono">{r.date}</td>
               <td><Link to={`/athlete/${r.id}`}>{r.athlete}</Link></td>
               <td>{r.type}</td>

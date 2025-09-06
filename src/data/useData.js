@@ -19,26 +19,20 @@ export function loadData(){
   try{
     const raw = localStorage.getItem(LS_KEY);
     if (raw) return mergeBase(sample, JSON.parse(raw));
-  }catch(e){}
+  }catch{}
   return sample;
 }
 
 export function saveData(data){ localStorage.setItem(LS_KEY, JSON.stringify(data)); }
 export function clearData(){ localStorage.removeItem(LS_KEY); }
 
-// helper: get raw cache (without merge) for accurate comparison
 function getCacheRaw(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    return raw ? JSON.parse(raw) : null;
-  }catch(e){ return null; }
+  try{ const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : null; }
+  catch{ return null; }
 }
+const serialise = obj => JSON.stringify(obj);
 
-// serialize consistently for comparison
-function serialise(obj){
-  return JSON.stringify(obj);
-}
-
+// Called on app load
 export async function ensureRemote(seasonId='2025'){
   try{
     const remote = await fetchRemoteSeason(seasonId);
@@ -51,18 +45,12 @@ export async function ensureRemote(seasonId='2025'){
     if (!parsed || !Array.isArray(parsed.athletes)) return;
 
     const cached = getCacheRaw();
-    // If no change, do nothing
-    if (cached && serialise(cached) === serialise(parsed)) {
-      return;
-    }
+    if (cached && serialise(cached) === serialise(parsed)) return;
 
-    // Data changed — save it
     saveData(parsed);
-
-    localStorage.setItem('seasonDiarySource', 'cloud');
+    localStorage.setItem('seasonDiarySource','cloud');
     localStorage.setItem('seasonDiaryLastRemoteAt', String(Date.now()));
 
-    // Avoid double reloads within this tab/session
     if (!sessionStorage.getItem(RELOAD_FLAG)) {
       sessionStorage.setItem(RELOAD_FLAG, '1');
       window.location.reload();

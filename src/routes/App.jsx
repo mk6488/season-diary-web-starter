@@ -5,15 +5,7 @@ import './styles.css'
 export default function App() {
   const [open, setOpen] = useState(false)
 
-  useEffect(()=>{
-    const close = () => setOpen(false)
-    window.addEventListener('hashchange', close)
-    window.addEventListener('popstate', close)
-    return () => {
-      window.removeEventListener('hashchange', close)
-      window.removeEventListener('popstate', close)
-    }
-  }, [])
+  useEffect(() => { ensureRemote('2025') }, []);
 
   return (
     <div className="shell">

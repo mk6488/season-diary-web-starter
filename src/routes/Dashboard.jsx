@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { getAthletes } from '../data/useData'
-import { useFilters } from '../data/filters'
+import { useFilters } from '../data/filters.jsx'
 
 function FocusTag({focus}){
   const cls = focus.includes('Endurance') && !focus.includes('Technique') ? 'endurance'

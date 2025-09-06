@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ensureRemote } from '../data/useData';
 import { CURRENT_SEASON_ID } from '../data/constants';
 import './styles.css';
-import { FiltersProvider } from '../data/filters';
+import { FiltersProvider } from '../data/filters.jsx';
 import CommandPalette from '../components/CommandPalette.jsx';
 
 // in App.jsx

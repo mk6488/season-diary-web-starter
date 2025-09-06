@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { getTests } from '../data/useData'
-import { useFilters } from '../data/filters'
+import { useFilters } from '../data/filters.jsx'
 
 export default function Tests(){
   const { focus } = useFilters()

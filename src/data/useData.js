@@ -29,13 +29,12 @@ export async function ensureRemote(seasonId='2025'){
   try{
     const remote = await fetchRemoteSeason(seasonId);
     if (!remote) return;
-    // Accept either { athletes: [...] } or { json: "..." }
     const parsed = remote.athletes ? remote
                  : remote.json ? JSON.parse(remote.json)
                  : null;
     if (parsed && parsed.athletes) {
       saveData(parsed);
-      window.location.reload(); // simple sync
+      window.location.reload();
     }
   }catch(e){
     console.warn('Firestore fetch failed', e);

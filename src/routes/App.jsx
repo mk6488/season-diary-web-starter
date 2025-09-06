@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
+import { ensureRemote } from '../data/useData';
 import './styles.css'
 
 export default function App() {

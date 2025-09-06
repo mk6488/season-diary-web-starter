@@ -2,6 +2,7 @@ import sample from './sample.json';
 import { fetchRemoteSeason } from './remote';
 
 const LS_KEY = 'seasonDiaryData';
+const RELOAD_FLAG = 'seasonDiaryReloading';
 
 function mergeBase(base, local){
   if (!local) return base;
@@ -15,26 +16,55 @@ function mergeBase(base, local){
 }
 
 export function loadData(){
-  try {
+  try{
     const raw = localStorage.getItem(LS_KEY);
     if (raw) return mergeBase(sample, JSON.parse(raw));
-  } catch {}
+  }catch(e){}
   return sample;
 }
 
 export function saveData(data){ localStorage.setItem(LS_KEY, JSON.stringify(data)); }
 export function clearData(){ localStorage.removeItem(LS_KEY); }
 
+// helper: get raw cache (without merge) for accurate comparison
+function getCacheRaw(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+
+// serialize consistently for comparison
+function serialise(obj){
+  return JSON.stringify(obj);
+}
+
 export async function ensureRemote(seasonId='2025'){
   try{
     const remote = await fetchRemoteSeason(seasonId);
     if (!remote) return;
+
+    // Accept either { athletes:[...] } or { json:"..." }
     const parsed = remote.athletes ? remote
                  : remote.json ? JSON.parse(remote.json)
                  : null;
-    if (parsed && parsed.athletes) {
-      saveData(parsed);
+    if (!parsed || !Array.isArray(parsed.athletes)) return;
+
+    const cached = getCacheRaw();
+    // If no change, do nothing
+    if (cached && serialise(cached) === serialise(parsed)) {
+      return;
+    }
+
+    // Data changed — save it
+    saveData(parsed);
+
+    // Avoid double reloads within this tab/session
+    if (!sessionStorage.getItem(RELOAD_FLAG)) {
+      sessionStorage.setItem(RELOAD_FLAG, '1');
       window.location.reload();
+    } else {
+      sessionStorage.removeItem(RELOAD_FLAG);
     }
   }catch(e){
     console.warn('Firestore fetch failed', e);

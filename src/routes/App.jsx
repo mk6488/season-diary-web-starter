@@ -6,7 +6,7 @@ import './styles.css'
 export default function App() {
   const [open, setOpen] = useState(false)
 
-  // useEffect(() => { ensureRemote('2025') }, []);
+  useEffect(() => { ensureRemote('2025') }, []);
 
   return (
     <div className="shell">

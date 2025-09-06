@@ -13,6 +13,8 @@ function FocusTag({focus}){
 
 export default function Dashboard(){
   const athletes = getAthletes()
+  .slice() // don’t mutate original
+  .sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }))
   return (
     <div className="grid">
       <div className="card">

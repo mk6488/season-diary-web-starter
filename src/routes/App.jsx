@@ -16,6 +16,7 @@ function readSyncInfo(){
 export default function App() {
   const [open, setOpen] = useState(false);
   const [syncInfo, setSyncInfo] = useState(readSyncInfo());
+  const [toast, setToast] = useState('');
   const location = useLocation();
 
   // Fetch central data once; ensureRemote reloads the page only if data changed
@@ -29,6 +30,17 @@ export default function App() {
     const onFocus = () => setSyncInfo(readSyncInfo());
     window.addEventListener('focus', onFocus);
     return () => window.removeEventListener('focus', onFocus);
+  }, []);
+
+  // Toast: after a reload triggered by cloud data change
+  useEffect(() => {
+    const key = 'seasonDiaryShowToast';
+    if (sessionStorage.getItem(key)) {
+      setToast('Cloud data updated. You are viewing the latest.');
+      sessionStorage.removeItem(key);
+      const t = setTimeout(() => setToast(''), 3500);
+      return () => clearTimeout(t);
+    }
   }, []);
 
   // A11y: focus trap, ESC to close, and hide background from AT while open
@@ -138,6 +150,9 @@ export default function App() {
 
       {/* Main content */}
       <main className="main">
+        {toast && (
+          <div className="toast" role="status" aria-live="polite">{toast}</div>
+        )}
         <Outlet />
       </main>
     </div>

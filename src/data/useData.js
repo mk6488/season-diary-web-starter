@@ -6,6 +6,7 @@ let currentData = sample;                     // in-memory only (no localStorage
 const SESSION_HASH_KEY = 'seasonDiaryHash';   // session-only guards (not your data)
 const SESSION_RELOADED = 'seasonDiaryReloaded';
 const SESSION_LAST_REMOTE_AT = 'seasonDiaryLastRemoteAt';
+const SESSION_SHOW_TOAST = 'seasonDiaryShowToast';
 
 const serialise = obj => JSON.stringify(obj);
 
@@ -44,6 +45,8 @@ export async function ensureRemote(seasonId=CURRENT_SEASON_ID){
     if (newHash !== prevHash) {
       sessionStorage.setItem(SESSION_HASH_KEY, newHash);
       if (!sessionStorage.getItem(SESSION_RELOADED)) {
+        // Flag a toast to inform the user after the reload
+        sessionStorage.setItem(SESSION_SHOW_TOAST, '1');
         sessionStorage.setItem(SESSION_RELOADED, '1');
         window.location.reload();
       } else {

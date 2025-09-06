@@ -62,6 +62,13 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
 .small{color:#6b7280;font-size:13px}
 
+/* Toast */
+.toast{
+  position:fixed;left:50%;top:16px;transform:translateX(-50%);
+  background:#0b1e3a;color:white;border-radius:10px;padding:10px 14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.18);z-index:60;font-size:14px
+}
+
 /* Topbar & Drawer (mobile) */
 .menu-btn,.close-btn{
   background:transparent;border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink);

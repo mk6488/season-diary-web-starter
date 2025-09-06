@@ -5,7 +5,6 @@ import './styles.css'
 export default function App() {
   const [open, setOpen] = useState(false)
 
-  // close drawer on route change via hashchange/popstate
   useEffect(()=>{
     const close = () => setOpen(false)
     window.addEventListener('hashchange', close)
@@ -32,13 +31,9 @@ export default function App() {
       {/* Sidebar / Drawer */}
       <aside className={open ? 'sidebar open' : 'sidebar'} aria-hidden={!open}>
         <div className="sidebar-inner">
-          <div className="sidebar-header">
+          <div className="sidebar-header" style={{display:'flex',alignItems:'center',gap:8}}>
             <h2>Season Diary</h2>
-            <button
-              className="close-btn"
-              aria-label="Close menu"
-              onClick={() => setOpen(false)}
-            >✕</button>
+            <button className="close-btn" aria-label="Close menu" onClick={() => setOpen(false)}>✕</button>
           </div>
           <nav onClick={()=>setOpen(false)}>
             <NavLink to="/" end>Dashboard</NavLink>
@@ -51,8 +46,8 @@ export default function App() {
         </div>
       </aside>
 
-      {/* Overlay for drawer */}
-      {open && <div className="overlay" onClick={()=>setOpen(false)}></div>}
+      {/* Overlay (mobile only) */}
+      {open && <div className="overlay" onClick={()=>setOpen(false)} />}
 
       {/* Main content */}
       <main className="main">

@@ -1,66 +1,70 @@
 :root{
-  --bg:#0b1220; /* your dark theme is fine */
-  --panel:#0e1a33;
-  --ink:#e6ecff;
-  --line:#243153;
+  --bg:#f6f8fc;        /* page background */
+  --panel:#ffffff;     /* cards/sidebar/topbar */
+  --ink:#0b1e3a;       /* headings/links */
+  --ink-2:#1f2937;     /* body text */
+  --line:#e5e7eb;      /* borders */
 }
+
 *{box-sizing:border-box}
 html,body,#root{height:100%}
-body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--ink)}
+body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:var(--bg);color:var(--ink-2)}
 
 /* --- Layout (desktop first) --- */
 .shell{
   display:grid;
   grid-template-areas: "sidebar main";
-  grid-template-columns: 280px 1fr;
+  grid-template-columns:280px 1fr;
   min-height:100vh;
 }
-.topbar{display:none} /* hidden on desktop */
+
+.topbar{display:none}
 
 .sidebar{
-  grid-area: sidebar;
-  background:#08132a;
-  color:#fff;
+  grid-area:sidebar;
+  background:var(--panel);
+  color:var(--ink);
   height:100vh;
-  position:sticky;
-  top:0;
-  z-index:10;
+  position:sticky; top:0; z-index:10;
+  border-right:1px solid var(--line);
 }
 .sidebar-inner{padding:20px;display:flex;flex-direction:column;height:100%}
-.sidebar h2{margin:0 0 12px 0;font-size:20px}
+.sidebar h2{margin:0 0 12px;font-size:20px}
 .sidebar nav{display:flex;flex-direction:column;gap:10px;margin-top:8px}
-.sidebar a{color:#d7e3ff;text-decoration:none;padding:10px 12px;border-radius:10px;display:block}
-.sidebar a.active{background:#1e3a8a;color:#fff}
+.sidebar a{color:#1e3a8a;text-decoration:none;padding:10px 12px;border-radius:10px;display:block}
+.sidebar a.active{background:#e8efff;color:#0b1e3a}
 .sidebar .footnote{margin-top:auto;opacity:.8}
 
 .main{
-  grid-area: main;
+  grid-area:main;
   padding:24px;
   background:var(--bg);
   min-height:100vh;
 }
 
 /* Cards & tables */
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
 .grid{display:grid;gap:12px}
 .table-wrap{width:100%;overflow-x:auto}
 .table{width:100%;border-collapse:collapse;min-width:640px}
 .table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
+.table th{font-weight:600}
 
 /* Tags */
-.tag{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #3b4a77;font-size:12px}
-.tag.endurance{background:#0e2a5f}
-.tag.aerobic{background:#0e3d2a}
-.tag.technique{background:#5b4a15}
-.tag.efficiency{background:#12345f}
-.tag.power{background:#5a1530}
+.tag{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #d1d5db;font-size:12px}
+.tag.endurance{background:#e7f5ff;border-color:#a5d8ff}
+.tag.aerobic{background:#e6ffe6;border-color:#9ae6b4}
+.tag.technique{background:#fff7e6;border-color:#ffd166}
+.tag.efficiency{background:#f0f7ff;border-color:#90cdf4}
+.tag.power{background:#ffe6ea;border-color:#f8a1b6}
 
+/* Utility */
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
-.small{color:#a9b4d6;font-size:13px}
+.small{color:#6b7280;font-size:13px}
 
-/* --- Mobile (drawer) --- */
+/* Topbar & Drawer (mobile) */
 .menu-btn,.close-btn{
-  background:transparent;border:1px solid #3b4a77;border-radius:10px;padding:8px 10px;color:#e6ecff;
+  background:transparent;border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink);
 }
 .topbar{
   display:none;
@@ -71,26 +75,25 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
     grid-template-areas:
       "topbar"
       "main";
-    grid-template-columns: 1fr;
+    grid-template-columns:1fr;
   }
   .topbar{
     display:flex;position:sticky;top:0;z-index:30;
     background:var(--panel);border-bottom:1px solid var(--line);
     padding:10px 12px;align-items:center;gap:12px;
   }
-  .brand{font-size:18px;margin:0}
+  .brand{font-size:18px;margin:0;color:var(--ink)}
 
-  /* Sidebar becomes a hidden drawer */
+  /* Sidebar becomes slide-in drawer */
   .sidebar{
     position:fixed;left:0;top:0;bottom:0;width:86%;max-width:320px;
     transform:translateX(-105%);
     transition:transform .25s ease;
-    border-right:1px solid #0f2650;
     z-index:45;
   }
   .sidebar.open{transform:translateX(0)}
   .sidebar .close-btn{display:inline-block;margin-left:auto}
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:40}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:40}
 
   .main{padding:16px}
   .table{min-width:560px}
@@ -98,4 +101,5 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
 
 @media (max-width: 380px){
   .table{min-width:500px}
+  .menu-btn{padding:6px 8px}
 }

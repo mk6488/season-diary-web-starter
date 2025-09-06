@@ -1,0 +1,246 @@
+{
+  "athletes": [
+    {
+      "id": "rocky",
+      "name": "Rocky Hooper",
+      "group": "J15",
+      "experience": "1 year in",
+      "focus": "Endurance",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "3:49.0",
+          "split": "1:54.5",
+          "rate": 25
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:49.9",
+          "split": "1:39.8",
+          "rate": 39
+        },
+        {
+          "date": "2025-05-01",
+          "type": "2k",
+          "time": "8:01.5",
+          "split": "2:00.3",
+          "rate": null
+        }
+      ]
+    },
+    {
+      "id": "aidan",
+      "name": "Aidan Walker",
+      "group": "J15",
+      "experience": "1 year in",
+      "focus": "Endurance",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "3:56.6",
+          "split": "1:58.3",
+          "rate": 26
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:49.8",
+          "split": "1:39.6",
+          "rate": 46
+        }
+      ]
+    },
+    {
+      "id": "zach",
+      "name": "Zach Bain",
+      "group": "J15",
+      "experience": "1 year in",
+      "focus": "Aerobic base",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "3:54.3",
+          "split": "1:57.1",
+          "rate": 27
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:50.0",
+          "split": "1:40.0",
+          "rate": 44
+        },
+        {
+          "date": "2025-05-01",
+          "type": "2k",
+          "time": "8:26.1",
+          "split": "2:06.5",
+          "rate": null
+        }
+      ]
+    },
+    {
+      "id": "harry",
+      "name": "Harry Mallender",
+      "group": "J15",
+      "experience": "1 year in",
+      "focus": "Technique",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "4:22.7",
+          "split": "2:11.3",
+          "rate": 31
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "1:08.5",
+          "split": "(DNF)",
+          "rate": null
+        },
+        {
+          "date": "2025-05-01",
+          "type": "2k",
+          "time": "10:48.1",
+          "split": "2:42.0",
+          "rate": null
+        }
+      ]
+    },
+    {
+      "id": "henryc",
+      "name": "Henry Cooper",
+      "group": "J15",
+      "experience": "1 year in",
+      "focus": "Efficiency",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "4:14.6",
+          "split": "2:07.3",
+          "rate": 27
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:55.4",
+          "split": "1:50.8",
+          "rate": 43
+        }
+      ]
+    },
+    {
+      "id": "reuben",
+      "name": "Reuben Wade",
+      "group": "J15",
+      "experience": "1 year in",
+      "focus": "Power",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "4:19.7",
+          "split": "2:09.8",
+          "rate": 26
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:57.6",
+          "split": "1:55.2",
+          "rate": 44
+        },
+        {
+          "date": "2025-05-01",
+          "type": "2k",
+          "time": "9:07.4",
+          "split": "2:16.0",
+          "rate": null
+        }
+      ]
+    },
+    {
+      "id": "virgil",
+      "name": "Virgil Bassham",
+      "group": "J14",
+      "experience": "new",
+      "focus": "Technique + Endurance",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "4:43.8",
+          "split": "2:21.9",
+          "rate": 26
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:57.4",
+          "split": "1:54.8",
+          "rate": 41
+        }
+      ]
+    },
+    {
+      "id": "henryb",
+      "name": "Henry Byrne",
+      "group": "J15",
+      "experience": "1 year in",
+      "focus": "Aerobic base",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "4:07.3",
+          "split": "2:03.6",
+          "rate": 28
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:54.1",
+          "split": "1:48.2",
+          "rate": 45
+        }
+      ]
+    },
+    {
+      "id": "henryt",
+      "name": "Henry Thorpe",
+      "group": "J14",
+      "experience": "1 year in",
+      "focus": "Balanced development",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "time": "4:04.5",
+          "split": "2:02.2",
+          "rate": 27
+        },
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:51.3",
+          "split": "1:42.6",
+          "rate": 44
+        },
+        {
+          "date": "2025-05-01",
+          "type": "2k",
+          "time": "8:45.5",
+          "split": "2:11.0",
+          "rate": null
+        }
+      ]
+    }
+  ]
+}

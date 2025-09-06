@@ -7,7 +7,7 @@ export default function Tests(){
   const { focus } = useFilters()
   const [sort, setSort] = useState({ key: 'date', dir: 'desc' })
 
-  const baseRows = getTests().filter(r => (focus ? r.type.includes('') || r.focus === focus : true))
+  const baseRows = getTests().filter(r => (focus ? r.focus === focus : true))
 
   const rows = useMemo(() => {
     const copy = baseRows.slice()
@@ -55,12 +55,24 @@ export default function Tests(){
       <div className="table-wrap"><table className="table">
         <thead style={{position:'sticky',top:0,background:'var(--panel)'}}>
           <tr>
-            <th role="button" tabIndex={0} aria-sort={ariaFor('date')} onClick={()=>toggleSort('date')} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSort('date')}}}>Date{caret('date')}</th>
-            <th role="button" tabIndex={0} aria-sort={ariaFor('athlete')} onClick={()=>toggleSort('athlete')} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSort('athlete')}}}>Athlete{caret('athlete')}</th>
-            <th role="button" tabIndex={0} aria-sort={ariaFor('type')} onClick={()=>toggleSort('type')} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSort('type')}}}>Test{caret('type')}</th>
-            <th role="button" tabIndex={0} aria-sort={ariaFor('time')} onClick={()=>toggleSort('time')} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSort('time')}}}>Time{caret('time')}</th>
-            <th role="button" tabIndex={0} aria-sort={ariaFor('split')} onClick={()=>toggleSort('split')} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSort('split')}}}>Split{caret('split')}</th>
-            <th role="button" tabIndex={0} aria-sort={ariaFor('rate')} onClick={()=>toggleSort('rate')} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggleSort('rate')}}}>Rate{caret('rate')}</th>
+            <th aria-sort={ariaFor('date')}>
+              <button className="th-sort" onClick={()=>toggleSort('date')}>Date <span className="sort-caret">{caret('date')}</span></button>
+            </th>
+            <th aria-sort={ariaFor('athlete')}>
+              <button className="th-sort" onClick={()=>toggleSort('athlete')}>Athlete <span className="sort-caret">{caret('athlete')}</span></button>
+            </th>
+            <th aria-sort={ariaFor('type')}>
+              <button className="th-sort" onClick={()=>toggleSort('type')}>Test <span className="sort-caret">{caret('type')}</span></button>
+            </th>
+            <th aria-sort={ariaFor('time')}>
+              <button className="th-sort" onClick={()=>toggleSort('time')}>Time <span className="sort-caret">{caret('time')}</span></button>
+            </th>
+            <th aria-sort={ariaFor('split')}>
+              <button className="th-sort" onClick={()=>toggleSort('split')}>Split <span className="sort-caret">{caret('split')}</span></button>
+            </th>
+            <th aria-sort={ariaFor('rate')}>
+              <button className="th-sort" onClick={()=>toggleSort('rate')}>Rate <span className="sort-caret">{caret('rate')}</span></button>
+            </th>
           </tr>
         </thead>
         <tbody>

@@ -63,7 +63,8 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
 .table{width:100%;border-collapse:collapse;min-width:640px}
 .table th,.table td{padding:10px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}
 .table th{font-weight:600}
-.table th[role="button"]{cursor:pointer}
+.table th .th-sort{background:transparent;border:0;padding:0;margin:0;color:inherit;font:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.table th .sort-caret{font-size:12px;opacity:.7}
 
 /* Tags */
 .tag{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #d1d5db;font-size:12px}

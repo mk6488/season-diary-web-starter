@@ -99,6 +99,17 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
   .table{min-width:560px}
 }
 
+/* Focus styles for keyboard users */
+:where(.menu-btn,.close-btn,.sidebar a):focus-visible{
+  outline:3px solid #60a5fa; /* sky-400 */
+  outline-offset:2px;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .sidebar{transition:none}
+}
+
 @media (max-width: 380px){
   .table{min-width:500px}
   .menu-btn{padding:6px 8px}

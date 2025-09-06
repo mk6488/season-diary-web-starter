@@ -31,6 +31,56 @@ export default function App() {
     return () => window.removeEventListener('focus', onFocus);
   }, []);
 
+  // A11y: focus trap, ESC to close, and hide background from AT while open
+  useEffect(() => {
+    if (!open) return;
+    const drawer = document.getElementById('site-drawer');
+    if (!drawer) return;
+
+    // Move focus into the drawer
+    const focusables = drawer.querySelectorAll(
+      'a,button,input,select,textarea,[tabindex]:not([tabindex="-1"])'
+    );
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    (first || drawer).focus();
+
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setOpen(false);
+      } else if (e.key === 'Tab' && focusables.length) {
+        // simple focus trap
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+
+    // Hide background
+    const main = document.querySelector('main.main');
+    if (main) {
+      main.setAttribute('inert', '');
+      main.setAttribute('aria-hidden', 'true');
+    }
+
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      if (main) {
+        main.removeAttribute('inert');
+        main.removeAttribute('aria-hidden');
+      }
+      const trigger = document.querySelector('.menu-btn');
+      trigger && trigger.focus && trigger.focus();
+    };
+  }, [open]);
+
   const syncLabel =
     syncInfo.source === 'cloud'
       ? `Cloud sync ✓${syncInfo.at ? ' • ' + new Date(syncInfo.at).toLocaleString() : ''}`
@@ -44,6 +94,8 @@ export default function App() {
           className="menu-btn"
           aria-label="Open menu"
           aria-expanded={open}
+          aria-controls="site-drawer"
+          aria-haspopup="dialog"
           onClick={() => setOpen(true)}
         >
           ☰
@@ -52,10 +104,18 @@ export default function App() {
       </header>
 
       {/* Sidebar / Drawer */}
-      <aside className={open ? 'sidebar open' : 'sidebar'} aria-hidden={!open}>
+      <aside
+        id="site-drawer"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="drawer-title"
+        className={open ? 'sidebar open' : 'sidebar'}
+        aria-hidden={!open}
+        tabIndex={-1}
+      >
         <div className="sidebar-inner">
           <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <h2>Season Diary</h2>
+            <h2 id="drawer-title">Season Diary</h2>
             <button className="close-btn" aria-label="Close menu" onClick={() => setOpen(false)}>
               ✕
             </button>
@@ -74,7 +134,7 @@ export default function App() {
       </aside>
 
       {/* Overlay (mobile only) */}
-      {open && <div className="overlay" onClick={() => setOpen(false)} />}
+      {open && <div className="overlay" aria-hidden="true" onClick={() => setOpen(false)} />}
 
       {/* Main content */}
       <main className="main">

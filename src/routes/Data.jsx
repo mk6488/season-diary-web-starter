@@ -1,47 +1,35 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { loadData, saveData, clearData } from '../data/useData';
-import { publishSeason } from '../data/remote';
+import { publishSeason, fetchRemoteSeason } from '../data/remote';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 export default function Data(){
-  const [text, setText] = useState(JSON.stringify(loadData(), null, 2));
+  const [text, setText] = useState('');         // editor text (shown only when signed in)
   const [msg, setMsg] = useState('');
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const fileRef = useRef(null);
 
-  // auth state
+  // Auth state
+  useEffect(() => onAuthStateChanged(auth, u => setUser(u)), []);
+
+  // Always fetch current cloud JSON on mount (to power downloads and, once signed in, prefill editor)
   useEffect(() => {
-    return onAuthStateChanged(auth, u => setUser(u));
+    (async () => {
+      try{
+        const remote = await fetchRemoteSeason('2025');
+        const parsed = remote?.athletes ? remote
+                     : remote?.json ? JSON.parse(remote.json)
+                     : { athletes: [] };
+        setText(JSON.stringify(parsed, null, 2));
+      }catch(e){
+        setMsg('Could not load cloud data: ' + e.message);
+      }
+    })();
   }, []);
 
-  function onSaveLocal(){
-    try{
-      const json = JSON.parse(text);
-      if (!json.athletes) throw new Error('Missing "athletes" array');
-      saveData(json);
-      setMsg('Saved locally. Reloading…');
-      setTimeout(()=> window.location.reload(), 400);
-    }catch(e){ setMsg('Local save error: ' + e.message); }
-  }
-  function onReset(){
-    clearData();
-    setMsg('Reset to bundled sample. Reloading…');
-    setTimeout(()=> window.location.reload(), 400);
-  }
-  function onDownload(){
-    const blob = new Blob([text], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'season-diary-data.json'; a.click();
-    URL.revokeObjectURL(url);
-  }
-  function onUpload(e){
-    const f = e.target.files?.[0]; if(!f) return;
-    const r = new FileReader(); r.onload = () => setText(String(r.result)); r.readAsText(f);
-  }
-
+  // Actions
   async function onPublish(){
     try{
       const json = JSON.parse(text);
@@ -53,33 +41,41 @@ export default function Data(){
       setMsg('Publish error: ' + e.message);
     }
   }
+  function onDownload(){
+    try{
+      const blob = new Blob([text], {type:'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'season-diary-data.json'; a.click();
+      URL.revokeObjectURL(url);
+    }catch(e){ setMsg('Download error: ' + e.message); }
+  }
+  function onUpload(e){
+    const f = e.target.files?.[0]; if(!f) return;
+    const r = new FileReader(); r.onload = () => setText(String(r.result)); r.readAsText(f);
+  }
 
   async function onLogin(e){
     e.preventDefault();
     try{
       await signInWithEmailAndPassword(auth, email, password);
-      setMsg('Signed in ✓');
-      setEmail(''); setPassword('');
-    }catch(e){
-      setMsg('Sign-in error: ' + e.message);
-    }
+      setMsg('Signed in ✓'); setEmail(''); setPassword('');
+    }catch(e){ setMsg('Sign-in error: ' + e.message); }
   }
-  async function onLogout(){
-    await signOut(auth); setMsg('Signed out.');
-  }
+  async function onLogout(){ await signOut(auth); setMsg('Signed out.'); }
 
   return (
     <div className="card">
       <h2>Data Manager</h2>
-      <p className="small">Paste or import JSON. Save locally to preview; <strong>Publish to Cloud</strong> sends it to Firestore for all coaches.</p>
+      <p className="small">
+        The site reads <strong>directly from Firestore</strong>. Sign in to publish updates.
+      </p>
 
       {/* Auth box */}
       <div className="card" style={{padding:12, marginBottom:12}}>
         {user ? (
-          <div>
-            <p className="small">Signed in as <strong>{user.email}</strong></p>
+          <div style={{display:'flex', gap:8, alignItems:'center', flexWrap:'wrap'}}>
+            <span className="small">Signed in as <strong>{user.email}</strong></span>
             <button onClick={onLogout}>Sign out</button>
-            <button onClick={onPublish} style={{marginLeft:8}}>Publish to Cloud</button>
           </div>
         ) : (
           <form onSubmit={onLogin} style={{display:'flex', gap:8, flexWrap:'wrap', alignItems:'center'}}>
@@ -90,22 +86,32 @@ export default function Data(){
         )}
       </div>
 
-      {/* JSON editor */}
-      <textarea
-        value={text}
-        onChange={e=>setText(e.target.value)}
-        style={{width:'100%', minHeight:'420px', fontFamily:'ui-monospace'}}
-      />
-
-      <div style={{display:'flex', gap:8, marginTop:8, flexWrap:'wrap'}}>
-        <button onClick={onSaveLocal}>Save locally</button>
-        <button onClick={onReset}>Reset to sample</button>
-        <button onClick={onDownload}>Download JSON</button>
-        <label style={{cursor:'pointer'}}>
-          <input ref={fileRef} type="file" accept="application/json" onChange={onUpload} style={{display:'none'}} />
-          <span className="tag">Upload JSON</span>
-        </label>
+      {/* Download is OK for everyone (reads cloud). Editor & upload/publish only after sign-in */}
+      <div className="card" style={{padding:12, marginBottom:12}}>
+        <div style={{display:'flex', gap:8, flexWrap:'wrap', alignItems:'center'}}>
+          <button onClick={onDownload}>Download current JSON</button>
+          {user && (
+            <>
+              <label style={{cursor:'pointer'}}>
+                <input ref={fileRef} type="file" accept="application/json" onChange={onUpload} style={{display:'none'}} />
+                <span className="tag">Upload JSON</span>
+              </label>
+              <button onClick={onPublish}>Publish to Cloud</button>
+            </>
+          )}
+        </div>
       </div>
+
+      {/* Editor shown only when signed in */}
+      {user ? (
+        <textarea
+          value={text}
+          onChange={e=>setText(e.target.value)}
+          style={{width:'100%', minHeight:'420px', fontFamily:'ui-monospace'}}
+        />
+      ) : (
+        <p className="small">Sign in to edit or upload new data.</p>
+      )}
 
       <p className="small" style={{marginTop:8}}>{msg}</p>
     </div>

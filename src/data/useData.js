@@ -1,70 +1,55 @@
-import sample from './sample.json';
+import sample from './sample.json';          // used only as a temporary placeholder
 import { fetchRemoteSeason } from './remote';
 
-const LS_KEY = 'seasonDiaryData';
-const RELOAD_FLAG = 'seasonDiaryReloading';
+let currentData = sample;                     // in-memory only (no localStorage)
+const SESSION_HASH_KEY = 'seasonDiaryHash';   // session-only guards (not your data)
+const SESSION_RELOADED = 'seasonDiaryReloaded';
+const SESSION_LAST_REMOTE_AT = 'seasonDiaryLastRemoteAt';
 
-function mergeBase(base, local){
-  if (!local) return base;
-  const byId = Object.fromEntries(base.athletes.map(a => [a.id, a]));
-  const merged = (local.athletes || []).map(a => {
-    const seed = byId[a.id] || {};
-    return { ...seed, ...a, tests: a.tests ?? seed.tests ?? [] };
-  });
-  for (const a of base.athletes) if (!merged.find(x => x.id === a.id)) merged.push(a);
-  return { athletes: merged };
-}
-
-export function loadData(){
-  try{
-    const raw = localStorage.getItem(LS_KEY);
-    if (raw) return mergeBase(sample, JSON.parse(raw));
-  }catch{}
-  return sample;
-}
-
-export function saveData(data){ localStorage.setItem(LS_KEY, JSON.stringify(data)); }
-export function clearData(){ localStorage.removeItem(LS_KEY); }
-
-function getCacheRaw(){
-  try{ const raw = localStorage.getItem(LS_KEY); return raw ? JSON.parse(raw) : null; }
-  catch{ return null; }
-}
 const serialise = obj => JSON.stringify(obj);
 
-// Called on app load
+// App pages read from this in-memory copy
+export function loadData(){ return currentData; }
+export function getAthletes(){ return loadData().athletes }
+export function getAthlete(id){ return loadData().athletes.find(a=>a.id===id) }
+export function getTests(){
+  const rows=[];
+  for(const a of loadData().athletes){
+    for(const t of a.tests){ rows.push({ athlete:a.name, id:a.id, ...t }) }
+  }
+  return rows.sort((a,b)=> (a.date<b.date?1:-1));
+}
+
+// On app load: fetch Firestore. If data changed vs last session, do one reload.
+// Either way, set currentData = remote so the UI shows cloud data.
 export async function ensureRemote(seasonId='2025'){
   try{
     const remote = await fetchRemoteSeason(seasonId);
     if (!remote) return;
 
-    // Accept either { athletes:[...] } or { json:"..." }
     const parsed = remote.athletes ? remote
                  : remote.json ? JSON.parse(remote.json)
                  : null;
     if (!parsed || !Array.isArray(parsed.athletes)) return;
 
-    const cached = getCacheRaw();
-    if (cached && serialise(cached) === serialise(parsed)) return;
+    currentData = parsed;
 
-    saveData(parsed);
-    localStorage.setItem('seasonDiarySource','cloud');
-    localStorage.setItem('seasonDiaryLastRemoteAt', String(Date.now()));
+    const newHash = serialise(parsed);
+    const prevHash = sessionStorage.getItem(SESSION_HASH_KEY);
 
-    if (!sessionStorage.getItem(RELOAD_FLAG)) {
-      sessionStorage.setItem(RELOAD_FLAG, '1');
-      window.location.reload();
-    } else {
-      sessionStorage.removeItem(RELOAD_FLAG);
+    // stamp a session time for the (optional) badge
+    sessionStorage.setItem(SESSION_LAST_REMOTE_AT, String(Date.now()));
+
+    if (newHash !== prevHash) {
+      sessionStorage.setItem(SESSION_HASH_KEY, newHash);
+      if (!sessionStorage.getItem(SESSION_RELOADED)) {
+        sessionStorage.setItem(SESSION_RELOADED, '1');
+        window.location.reload();
+      } else {
+        sessionStorage.removeItem(SESSION_RELOADED);
+      }
     }
   }catch(e){
     console.warn('Firestore fetch failed', e);
   }
-}
-
-export function getAthletes(){ return loadData().athletes }
-export function getAthlete(id){ return loadData().athletes.find(a=>a.id===id) }
-export function getTests(){
-  const rows=[]; for(const a of loadData().athletes){ for(const t of a.tests){ rows.push({ athlete:a.name, id:a.id, ...t }) } }
-  return rows.sort((a,b)=> (a.date<b.date?1:-1));
 }

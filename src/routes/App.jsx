@@ -3,12 +3,12 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ensureRemote } from '../data/useData';
 import './styles.css';
 
-function readSyncInfo() {
-  const source = localStorage.getItem('seasonDiarySource') || 'local';
-  const atRaw = localStorage.getItem('seasonDiaryLastRemoteAt');
-  const at = atRaw ? Number(atRaw) : null;
-  return { source, at };
+// in App.jsx
+function readSyncInfo(){
+  const atRaw = sessionStorage.getItem('seasonDiaryLastRemoteAt');
+  return atRaw ? `Cloud sync ✓ • ${new Date(Number(atRaw)).toLocaleString()}` : 'Cloud data';
 }
+
 
 export default function App() {
   const [open, setOpen] = useState(false);

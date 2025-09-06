@@ -59,6 +59,9 @@ export async function ensureRemote(seasonId='2025'){
     // Data changed — save it
     saveData(parsed);
 
+    localStorage.setItem('seasonDiarySource', 'cloud');
+    localStorage.setItem('seasonDiaryLastRemoteAt', String(Date.now()));
+
     // Avoid double reloads within this tab/session
     if (!sessionStorage.getItem(RELOAD_FLAG)) {
       sessionStorage.setItem(RELOAD_FLAG, '1');

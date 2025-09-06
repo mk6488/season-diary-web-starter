@@ -1,12 +1,37 @@
-import React, { useState, useEffect } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ensureRemote } from '../data/useData';
-import './styles.css'
+import './styles.css';
+
+function readSyncInfo() {
+  const source = localStorage.getItem('seasonDiarySource') || 'local';
+  const atRaw = localStorage.getItem('seasonDiaryLastRemoteAt');
+  const at = atRaw ? Number(atRaw) : null;
+  return { source, at };
+}
 
 export default function App() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [syncInfo, setSyncInfo] = useState(readSyncInfo());
+  const location = useLocation();
 
-  useEffect(() => { ensureRemote('2025') }, []);
+  // Fetch central data once; ensureRemote reloads the page only if data changed
+  useEffect(() => { ensureRemote('2025'); }, []);
+
+  // Close drawer when route changes
+  useEffect(() => { setOpen(false); }, [location]);
+
+  // Update sync badge when the tab regains focus
+  useEffect(() => {
+    const onFocus = () => setSyncInfo(readSyncInfo());
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
+  }, []);
+
+  const syncLabel =
+    syncInfo.source === 'cloud'
+      ? `Cloud sync ✓${syncInfo.at ? ' • ' + new Date(syncInfo.at).toLocaleString() : ''}`
+      : 'Local data';
 
   return (
     <div className="shell">
@@ -17,35 +42,41 @@ export default function App() {
           aria-label="Open menu"
           aria-expanded={open}
           onClick={() => setOpen(true)}
-        >☰</button>
+        >
+          ☰
+        </button>
         <h1 className="brand">Season Diary</h1>
       </header>
 
       {/* Sidebar / Drawer */}
       <aside className={open ? 'sidebar open' : 'sidebar'} aria-hidden={!open}>
         <div className="sidebar-inner">
-          <div className="sidebar-header" style={{display:'flex',alignItems:'center',gap:8}}>
+          <div className="sidebar-header" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <h2>Season Diary</h2>
-            <button className="close-btn" aria-label="Close menu" onClick={() => setOpen(false)}>✕</button>
+            <button className="close-btn" aria-label="Close menu" onClick={() => setOpen(false)}>
+              ✕
+            </button>
           </div>
-          <nav onClick={()=>setOpen(false)}>
+
+          <nav onClick={() => setOpen(false)}>
             <NavLink to="/" end>Dashboard</NavLink>
             <NavLink to="/tests">Testing Log</NavLink>
             <NavLink to="/themes">Focus & Themes</NavLink>
             <NavLink to="/plan">6-Week Plan</NavLink>
             <NavLink to="/data">Data</NavLink>
           </nav>
-          <p className="small footnote">Tip: use the Data page to paste/upload JSON after each test day.</p>
+
+          <p className="small footnote">{syncLabel}</p>
         </div>
       </aside>
 
       {/* Overlay (mobile only) */}
-      {open && <div className="overlay" onClick={()=>setOpen(false)} />}
+      {open && <div className="overlay" onClick={() => setOpen(false)} />}
 
       {/* Main content */}
       <main className="main">
         <Outlet />
       </main>
     </div>
-  )
+  );
 }

@@ -42,7 +42,7 @@ export default function Data(){
       const errors = validateSeason(uploaded);
       if (errors.length) throw new Error('Invalid JSON: ' + errors[0]);
       const merged = mergeSeason(cloudData || { athletes: [] }, uploaded);
-      await publishSeason(CURRENT_SEASON_ID, merged);
+      await publishSeason(CURRENT_SEASON_ID, merged, { uid: user.uid, email: user.email });
       setMsg('Published to Firestore ✓ — everyone will see this after reload.');
       setUploaded(null); setUploadInfo('');
     }catch(e){
@@ -126,6 +126,15 @@ export default function Data(){
               </label>
               <button onClick={onPublish} disabled={!uploaded || uploadInfo.startsWith('Invalid')}>Publish to Cloud</button>
               {uploadInfo && <span className="small">{uploadInfo}</span>}
+              {/* Optional: Migrate legacy single-document data to normalized subcollections */}
+              <button onClick={async ()=>{
+                try{
+                  if(!user) throw new Error('Please sign in first.');
+                  if (!cloudData) throw new Error('No cloud data to migrate.');
+                  await publishSeason(CURRENT_SEASON_ID, cloudData, { uid:user.uid, email:user.email });
+                  setMsg('Migration completed ✓');
+                }catch(e){ setMsg('Migration error: ' + e.message); }
+              }}>Migrate legacy → normalized</button>
             </>
           )}
         </div>

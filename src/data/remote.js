@@ -66,7 +66,7 @@ export async function fetchRemoteSeason(seasonId = '2025'){
 }
 
 // WRITE central JSON: publish athletes array and remove legacy "json"
-export async function publishSeason(seasonId, data){
+export async function publishSeason(seasonId, data, publisher){
   if (!data || !Array.isArray(data.athletes)) {
     throw new Error('Data must be { athletes: [...] }');
   }
@@ -85,6 +85,8 @@ export async function publishSeason(seasonId, data){
       focus: a.focus ?? '',
       coachNote: a.coachNote ?? '',
       updatedAt: serverTimestamp(),
+      updatedByUid: publisher?.uid ?? null,
+      updatedByEmail: publisher?.email ?? null,
     }, { merge: true });
 
     // Upsert tests for this athlete
@@ -103,12 +105,19 @@ export async function publishSeason(seasonId, data){
         rate: typeof t.rate === 'number' || t.rate === null ? t.rate : Number(t.rate) || null,
         updatedAt: serverTimestamp(),
         createdAt: serverTimestamp(),
+        updatedByUid: publisher?.uid ?? null,
+        updatedByEmail: publisher?.email ?? null,
       }, { merge: true });
     }
   }
 
   // Stamp season root doc (and remove legacy json if present)
-  batch.set(seasonRef, { updatedAt: Date.now(), json: deleteField() }, { merge: true });
+  batch.set(seasonRef, {
+    updatedAt: Date.now(),
+    json: deleteField(),
+    lastPublishedByUid: publisher?.uid ?? null,
+    lastPublishedByEmail: publisher?.email ?? null,
+  }, { merge: true });
 
   await batch.commit();
 }

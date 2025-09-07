@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { publishSeason, fetchRemoteSeason, publishTest, renameAthleteId, renameTestId, renameTestDoc } from '../data/remote';
+import { publishSeason, fetchRemoteSeason } from '../data/remote';
 import { CURRENT_SEASON_ID } from '../data/constants';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
@@ -14,21 +14,6 @@ export default function Data(){
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const fileRef = useRef(null);
-  // manual entry state
-  const [mId, setMId] = useState('');
-  const [mName, setMName] = useState('');
-  const [mType, setMType] = useState('1k@24');
-  const [mDate, setMDate] = useState('');
-  const [mTime, setMTime] = useState('');
-  const [mSplit, setMSplit] = useState('');
-  const [mRate, setMRate] = useState('');
-  const [mValue, setMValue] = useState('');
-  const [mUnit, setMUnit] = useState('');
-  const [oldId, setOldId] = useState('');
-  const [newId, setNewId] = useState('');
-  const [newName, setNewName] = useState('');
-  const [tOldId, setTOldId] = useState('');
-  const [tNewId, setTNewId] = useState('');
 
   // Auth state
   useEffect(() => onAuthStateChanged(auth, u => setUser(u)), []);
@@ -156,77 +141,7 @@ export default function Data(){
       </div>
       {!user && <p className="small">Sign in to upload and publish new data.</p>}
 
-      {user && (
-        <div className="card" style={{padding:12, marginTop:12}}>
-          <h3>Add single test</h3>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(180px,1fr))',gap:8}}>
-            <input required placeholder="Athlete ID (e.g., rocky)" value={mId} onChange={e=>setMId(e.target.value)} />
-            <input required placeholder="Athlete name" value={mName} onChange={e=>setMName(e.target.value)} />
-            <input required placeholder="Test type (e.g., 1k@24)" value={mType} onChange={e=>setMType(e.target.value)} />
-            <input required type="date" placeholder="Date" value={mDate} onChange={e=>setMDate(e.target.value)} />
-            <input placeholder="Time (e.g., 3:49.0)" value={mTime} onChange={e=>setMTime(e.target.value)} />
-            <input placeholder="Split (e.g., 1:54.5)" value={mSplit} onChange={e=>setMSplit(e.target.value)} />
-            <input placeholder="Rate (e.g., 24)" value={mRate} onChange={e=>setMRate(e.target.value)} />
-            <input placeholder="Value (e.g., 150)" value={mValue ?? ''} onChange={e=>setMValue(e.target.value)} />
-            <input placeholder="Unit (e.g., kg)" value={mUnit ?? ''} onChange={e=>setMUnit(e.target.value)} />
-          </div>
-          <div style={{marginTop:8}}>
-            <button onClick={async ()=>{
-              try{
-                if(!mId || !mName || !mType || !mDate) throw new Error('Please fill ID, name, type, and date');
-                const rateNum = mRate === '' ? null : Number(mRate);
-                await publishTest(CURRENT_SEASON_ID,
-                  { id:mId, name:mName },
-                  { type:mType, date:mDate, time:mTime, split:mSplit, rate: Number.isNaN(rateNum)? null: rateNum, value: mValue===''? undefined: Number(mValue), unit: mUnit||undefined },
-                  { uid:user.uid, email:user.email }
-                );
-                setMsg('Test saved ✓');
-                setMTime(''); setMSplit(''); setMRate(''); setMValue(''); setMUnit('');
-              }catch(e){ setMsg('Save error: ' + e.message); }
-            }}>Save test</button>
-          </div>
-        </div>
-      )}
-
-      {user && (
-        <div className="card" style={{padding:12, marginTop:12}}>
-          <h3>Rename athlete ID</h3>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:8}}>
-            <input placeholder="Old ID (e.g., rocky)" value={oldId} onChange={e=>setOldId(e.target.value)} />
-            <input placeholder="New ID (e.g., rocky-hooper)" value={newId} onChange={e=>setNewId(e.target.value)} />
-            <input placeholder="New name (optional)" value={newName} onChange={e=>setNewName(e.target.value)} />
-          </div>
-          <div style={{marginTop:8}}>
-            <button onClick={async ()=>{
-              try{
-                if(!oldId || !newId) throw new Error('Please fill old and new IDs');
-                await renameAthleteId(CURRENT_SEASON_ID, oldId, newId, newName || undefined, { uid:user.uid, email:user.email });
-                setMsg('Athlete ID renamed ✓'); setOldId(''); setNewId(''); setNewName('');
-              }catch(e){ setMsg('Rename error: ' + e.message); }
-            }}>Rename</button>
-          </div>
-        </div>
-      )}
-
-      {user && (
-        <div className="card" style={{padding:12, marginTop:12}}>
-          <h3>Rename test ID</h3>
-          <div className="small" style={{marginBottom:8}}>Old and new full test IDs (e.g., rocky_2025-09-06_1k-24).</div>
-          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:8}}>
-            <input placeholder="Old test ID" value={tOldId} onChange={e=>setTOldId(e.target.value)} />
-            <input placeholder="New test ID" value={tNewId} onChange={e=>setTNewId(e.target.value)} />
-          </div>
-          <div style={{marginTop:8}}>
-            <button onClick={async ()=>{
-              try{
-                if(!tOldId || !tNewId) throw new Error('Please fill old and new test IDs');
-                await renameTestDoc(CURRENT_SEASON_ID, tOldId, tNewId, { uid:user.uid, email:user.email });
-                setMsg('Test ID renamed ✓'); setTOldId(''); setTNewId('');
-              }catch(e){ setMsg('Rename error: ' + e.message); }
-            }}>Rename test</button>
-          </div>
-        </div>
-      )}
+      {/* Forms removed per request: manual test entry and rename tools */}
 
       <p className="small" style={{marginTop:8}}>{msg}</p>
     </div>

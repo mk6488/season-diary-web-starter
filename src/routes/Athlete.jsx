@@ -27,10 +27,20 @@ export default function Athlete(){
                 const currSec = parseTimeToSeconds(t.time);
                 const prevSec = parseTimeToSeconds(prev?.time);
                 const delta = Number.isFinite(currSec) && Number.isFinite(prevSec) ? currSec - prevSec : NaN;
-                const isPr = Number.isFinite(currSec) && a.tests.reduce((best, x)=>{
-                  const s = parseTimeToSeconds(x.time);
-                  return Number.isFinite(s) ? Math.min(best, s) : best;
-                }, Infinity) === currSec;
+                // PR logic per test type: first occurrence is PR; later PR if faster than any previous of same type
+                const priorSame = a.tests.slice(i+1).filter(x => x.type === t.type);
+                let isPr = false;
+                if (Number.isFinite(currSec)){
+                  if (priorSame.length === 0) {
+                    isPr = true;
+                  } else {
+                    const bestPrev = priorSame.reduce((best, x)=>{
+                      const s = parseTimeToSeconds(x.time);
+                      return Number.isFinite(s) ? Math.min(best, s) : best;
+                    }, Infinity);
+                    isPr = Number.isFinite(bestPrev) && currSec < bestPrev;
+                  }
+                }
                 return (
                   <tr key={`${a.id}-${t.date}-${t.type}`} className={isPr ? 'pr' : ''}>
                     <td className="mono">{t.date}</td>

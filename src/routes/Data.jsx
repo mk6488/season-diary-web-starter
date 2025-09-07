@@ -92,11 +92,18 @@ export default function Data(){
   async function onLogout(){ await signOut(auth); setMsg('Signed out.'); }
 
   return (
-    <div className="card">
-      <h2>Data Manager</h2>
-      <p className="small">
-        The site reads <strong>directly from Firestore</strong>. Sign in to publish updates.
-      </p>
+    <div className="grid">
+      <div className="card">
+        <h2>Data Manager</h2>
+        <p className="small">
+          The site reads <strong>directly from Firestore</strong>. Sign in to publish updates.
+        </p>
+        <div className="stat-grid" style={{marginTop:8}}>
+          <div className="stat"><div className="label">Athletes</div><div className="num">{cloudData?.athletes?.length ?? 0}</div></div>
+          <div className="stat"><div className="label">Tests</div><div className="num">{(cloudData?.athletes||[]).reduce((n,a)=> n + (a.tests?.length||0), 0)}</div></div>
+          <div className="stat"><div className="label">Last update</div><div className="num small">{cloudText ? new Date().toLocaleString() : '-'}</div></div>
+        </div>
+      </div>
 
       {/* Auth box */}
       <div className="card" style={{padding:12, marginBottom:12}}>

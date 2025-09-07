@@ -8,6 +8,8 @@ import {
   getDocs,
   writeBatch,
   serverTimestamp,
+  query,
+  where,
 } from 'firebase/firestore';
 
 // READ central JSON: supports either { athletes:[...] } or legacy { json:"..." }
@@ -131,6 +133,74 @@ function makeTestId(athleteId, date, type){
   return `${athleteId}_${date}_${safeType}`;
 }
 
+// Rename an athlete ID and re-key all their tests
+export async function renameAthleteId(seasonId, oldId, newId, newName, publisher){
+  if (!oldId || !newId || oldId === newId) throw new Error('Provide different old and new IDs');
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+
+  // Load existing athlete to carry fields
+  const oldARef = doc(seasonRef, 'athletes', oldId);
+  const oldSnap = await getDoc(oldARef);
+  const oldData = oldSnap.exists() ? oldSnap.data() : {};
+  const targetName = newName || oldData.name || newId;
+
+  // Fetch all tests for oldId
+  const testsQ = query(collection(seasonRef, 'tests'), where('athleteId', '==', oldId));
+  const testsSnap = await getDocs(testsQ);
+
+  let batch = writeBatch(db);
+  let opCount = 0;
+  const commitIfNeeded = async () => {
+    if (opCount >= 400) { await batch.commit(); batch = writeBatch(db); opCount = 0; }
+  };
+
+  // Upsert new athlete doc
+  const newARef = doc(seasonRef, 'athletes', newId);
+  batch.set(newARef, {
+    name: targetName,
+    group: oldData.group ?? '',
+    experience: oldData.experience ?? '',
+    focus: oldData.focus ?? '',
+    coachNote: oldData.coachNote ?? '',
+    updatedAt: serverTimestamp(),
+    updatedByUid: publisher?.uid ?? null,
+    updatedByEmail: publisher?.email ?? null,
+  }, { merge: true });
+  opCount++;
+  await commitIfNeeded();
+
+  // Migrate tests
+  for (const d of testsSnap.docs){
+    const t = d.data();
+    const newTRef = doc(seasonRef, 'tests', makeTestId(newId, t.date, t.type));
+    batch.set(newTRef, {
+      athleteId: newId,
+      athleteName: targetName,
+      date: t.date,
+      type: t.type,
+      time: t.time ?? '',
+      split: t.split ?? '',
+      rate: typeof t.rate === 'number' || t.rate === null ? t.rate : Number(t.rate) || null,
+      value: typeof t.value === 'number' ? t.value : (t.value != null ? Number(t.value) : undefined),
+      unit: t.unit,
+      createdAt: t.createdAt ?? serverTimestamp(),
+      updatedAt: serverTimestamp(),
+      updatedByUid: publisher?.uid ?? null,
+      updatedByEmail: publisher?.email ?? null,
+    }, { merge: true });
+    opCount++;
+    await commitIfNeeded();
+
+    // Delete old test doc
+    batch.delete(d.ref); opCount++; await commitIfNeeded();
+  }
+
+  // Delete old athlete doc
+  if (oldSnap.exists()) { batch.delete(oldARef); opCount++; }
+  batch.set(seasonRef, { updatedAt: Date.now() }, { merge: true }); opCount++;
+
+  await batch.commit();
+}
 // Add or update a single test for an athlete (idempotent)
 export async function publishTest(seasonId, athlete, test, publisher){
   const seasonRef = doc(db, 'seasonDiary', seasonId);

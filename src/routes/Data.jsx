@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { publishSeason, fetchRemoteSeason, publishTest } from '../data/remote';
+import { publishSeason, fetchRemoteSeason, publishTest, renameAthleteId } from '../data/remote';
 import { CURRENT_SEASON_ID } from '../data/constants';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
@@ -24,6 +24,9 @@ export default function Data(){
   const [mRate, setMRate] = useState('');
   const [mValue, setMValue] = useState('');
   const [mUnit, setMUnit] = useState('');
+  const [oldId, setOldId] = useState('');
+  const [newId, setNewId] = useState('');
+  const [newName, setNewName] = useState('');
 
   // Auth state
   useEffect(() => onAuthStateChanged(auth, u => setUser(u)), []);
@@ -179,6 +182,26 @@ export default function Data(){
                 setMTime(''); setMSplit(''); setMRate(''); setMValue(''); setMUnit('');
               }catch(e){ setMsg('Save error: ' + e.message); }
             }}>Save test</button>
+          </div>
+        </div>
+      )}
+
+      {user && (
+        <div className="card" style={{padding:12, marginTop:12}}>
+          <h3>Rename athlete ID</h3>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:8}}>
+            <input placeholder="Old ID (e.g., rocky)" value={oldId} onChange={e=>setOldId(e.target.value)} />
+            <input placeholder="New ID (e.g., rocky-hooper)" value={newId} onChange={e=>setNewId(e.target.value)} />
+            <input placeholder="New name (optional)" value={newName} onChange={e=>setNewName(e.target.value)} />
+          </div>
+          <div style={{marginTop:8}}>
+            <button onClick={async ()=>{
+              try{
+                if(!oldId || !newId) throw new Error('Please fill old and new IDs');
+                await renameAthleteId(CURRENT_SEASON_ID, oldId, newId, newName || undefined, { uid:user.uid, email:user.email });
+                setMsg('Athlete ID renamed ✓'); setOldId(''); setNewId(''); setNewName('');
+              }catch(e){ setMsg('Rename error: ' + e.message); }
+            }}>Rename</button>
           </div>
         </div>
       )}

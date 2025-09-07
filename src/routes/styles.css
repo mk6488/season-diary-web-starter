@@ -82,6 +82,20 @@ tr.pr td{background:linear-gradient(90deg, rgba(16,185,129,.12), transparent)}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
 .small{color:#6b7280;font-size:13px}
 
+/* Themes */
+.themes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.theme{border:1px solid var(--line);border-radius:12px;padding:12px;background:linear-gradient(135deg, rgba(255,255,255,.9), rgba(240,246,255,.9))}
+.theme-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.theme h3{margin:0;font-size:16px}
+.badge{display:inline-block;background:#111827;color:#fff;border-radius:999px;padding:2px 8px;font-size:12px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:6px 10px;border-radius:999px;background:#eef2ff;border:1px solid #c7d2fe}
+.theme.theme-endurance{background:linear-gradient(135deg, #e7f5ff, #ffffff)}
+.theme.theme-aerobic-base{background:linear-gradient(135deg, #e6ffe6, #ffffff)}
+.theme.theme-technique{background:linear-gradient(135deg, #fff7e6, #ffffff)}
+.theme.theme-efficiency{background:linear-gradient(135deg, #f0f7ff, #ffffff)}
+.theme.theme-power{background:linear-gradient(135deg, #ffe6ea, #ffffff)}
+
 /* Toast */
 .toast{
   position:fixed;left:50%;top:16px;transform:translateX(-50%);

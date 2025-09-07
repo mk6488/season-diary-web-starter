@@ -10,21 +10,29 @@ export default function Themes(){
     byFocus.get(label).push(a.name);
   }
   const groups = Array.from(byFocus.entries())
-    .map(([label, names]) => ({ label, names: names.slice().sort((a,b)=>a.localeCompare(b)) }))
+    .map(([label, names]) => ({ label, count: names.length, names: names.slice().sort((a,b)=>a.localeCompare(b)) }))
     .sort((a,b)=> a.label.localeCompare(b.label));
 
   return (
     <div className="grid">
       <div className="card">
-        <h2>Current Focus Groups</h2>
+        <h2>Focus & Themes</h2>
         {groups.length === 0 ? (
           <p className="small">No athletes available.</p>
         ) : (
-          <ul>
+          <div className="themes-grid">
             {groups.map(g => (
-              <li key={g.label}><strong>{g.label}:</strong> {g.names.join(', ')}</li>
+              <div key={g.label} className={`theme theme-${slug(g.label)}`}>
+                <div className="theme-head">
+                  <h3>{g.label}</h3>
+                  <span className="badge">{g.count}</span>
+                </div>
+                <div className="chips">
+                  {g.names.map(n => <span key={n} className="chip">{n}</span>)}
+                </div>
+              </div>
             ))}
-          </ul>
+          </div>
         )}
       </div>
       <div className="card">
@@ -33,4 +41,8 @@ export default function Themes(){
       </div>
     </div>
   )
+}
+
+function slug(s){
+  return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
 }

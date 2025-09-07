@@ -43,8 +43,10 @@ export default function Data(){
       if (errors.length) throw new Error('Invalid JSON: ' + errors[0]);
       const merged = mergeSeason(cloudData || { athletes: [] }, uploaded);
       await publishSeason(CURRENT_SEASON_ID, merged, { uid: user.uid, email: user.email });
-      setMsg('Published to Firestore ✓ — everyone will see this after reload.');
+      setMsg('Published to Firestore ✓ — refreshing…');
       setUploaded(null); setUploadInfo('');
+      try{ sessionStorage.setItem('seasonDiaryShowToast','1'); }catch{}
+      setTimeout(()=>{ window.location.reload(); }, 400);
     }catch(e){
       setMsg('Publish error: ' + e.message);
     }

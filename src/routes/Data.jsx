@@ -5,7 +5,10 @@ import { auth } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 export default function Data(){
-  const [text, setText] = useState('');         // editor text (shown only when signed in)
+  const [cloudText, setCloudText] = useState('');   // latest cloud JSON string (for download)
+  const [cloudData, setCloudData] = useState(null); // latest cloud parsed
+  const [uploaded, setUploaded] = useState(null);   // last uploaded parsed JSON
+  const [uploadInfo, setUploadInfo] = useState(''); // summary or error
   const [msg, setMsg] = useState('');
   const [user, setUser] = useState(null);
   const [email, setEmail] = useState('');
@@ -15,7 +18,7 @@ export default function Data(){
   // Auth state
   useEffect(() => onAuthStateChanged(auth, u => setUser(u)), []);
 
-  // Always fetch current cloud JSON on mount (to power downloads and, once signed in, prefill editor)
+  // Always fetch current cloud JSON on mount (to power downloads and validation)
   useEffect(() => {
     (async () => {
       try{
@@ -23,7 +26,8 @@ export default function Data(){
         const parsed = remote?.athletes ? remote
                      : remote?.json ? JSON.parse(remote.json)
                      : { athletes: [] };
-        setText(JSON.stringify(parsed, null, 2));
+        setCloudData(parsed);
+        setCloudText(JSON.stringify(parsed, null, 2));
       }catch(e){
         setMsg('Could not load cloud data: ' + e.message);
       }
@@ -33,18 +37,21 @@ export default function Data(){
   // Actions
   async function onPublish(){
     try{
-      const json = JSON.parse(text);
-      if (!Array.isArray(json.athletes)) throw new Error('JSON must be { "athletes": [...] }');
       if (!user) throw new Error('Please sign in first.');
-      await publishSeason(CURRENT_SEASON_ID, json);
+      if (!uploaded) throw new Error('Please upload a JSON file first.');
+      const errors = validateSeason(uploaded);
+      if (errors.length) throw new Error('Invalid JSON: ' + errors[0]);
+      const merged = mergeSeason(cloudData || { athletes: [] }, uploaded);
+      await publishSeason(CURRENT_SEASON_ID, merged);
       setMsg('Published to Firestore ✓ — everyone will see this after reload.');
+      setUploaded(null); setUploadInfo('');
     }catch(e){
       setMsg('Publish error: ' + e.message);
     }
   }
   function onDownload(){
     try{
-      const blob = new Blob([text], {type:'application/json'});
+      const blob = new Blob([cloudText || '{}'], {type:'application/json'});
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a'); a.href = url; a.download = 'season-diary-data.json'; a.click();
       URL.revokeObjectURL(url);
@@ -57,11 +64,19 @@ export default function Data(){
       try{
         const raw = String(r.result);
         const parsed = JSON.parse(raw);
-        setText(JSON.stringify(parsed, null, 2));
-        setMsg('Upload loaded ✓');
+        const errors = validateSeason(parsed);
+        if (errors.length){
+          setUploaded(null);
+          setUploadInfo('Invalid JSON: ' + errors[0]);
+        } else {
+          const athletes = Array.isArray(parsed.athletes) ? parsed.athletes.length : 0;
+          const tests = Array.isArray(parsed.athletes) ? parsed.athletes.reduce((n,a)=> n + (Array.isArray(a.tests)?a.tests.length:0), 0) : 0;
+          setUploaded(parsed);
+          setUploadInfo(`Ready ✓ — ${athletes} athletes, ${tests} tests`);
+        }
       }catch(err){
-        setText(String(r.result));
-        setMsg('Upload error: invalid JSON');
+        setUploaded(null);
+        setUploadInfo('Upload error: invalid JSON');
       }
     };
     r.readAsText(f);
@@ -99,7 +114,7 @@ export default function Data(){
         )}
       </div>
 
-      {/* Download is OK for everyone (reads cloud). Editor & upload/publish only after sign-in */}
+      {/* Download is OK for everyone (reads cloud). Upload/publish only after sign-in */}
       <div className="card" style={{padding:12, marginBottom:12}}>
         <div style={{display:'flex', gap:8, flexWrap:'wrap', alignItems:'center'}}>
           <button onClick={onDownload}>Download current JSON</button>
@@ -109,24 +124,58 @@ export default function Data(){
                 <input ref={fileRef} type="file" accept="application/json" onChange={onUpload} style={{display:'none'}} />
                 <span className="tag">Upload JSON</span>
               </label>
-              <button onClick={onPublish}>Publish to Cloud</button>
+              <button onClick={onPublish} disabled={!uploaded || uploadInfo.startsWith('Invalid')}>Publish to Cloud</button>
+              {uploadInfo && <span className="small">{uploadInfo}</span>}
             </>
           )}
         </div>
       </div>
-
-      {/* Editor shown only when signed in */}
-      {user ? (
-        <textarea
-          value={text}
-          onChange={e=>setText(e.target.value)}
-          style={{width:'100%', minHeight:'420px', fontFamily:'ui-monospace'}}
-        />
-      ) : (
-        <p className="small">Sign in to edit or upload new data.</p>
-      )}
+      {!user && <p className="small">Sign in to upload and publish new data.</p>}
 
       <p className="small" style={{marginTop:8}}>{msg}</p>
     </div>
   );
+}
+
+// --- helpers ---
+function validateSeason(json){
+  const errors = [];
+  if (!json || !Array.isArray(json.athletes)){
+    errors.push('Root must be an object with athletes: []');
+    return errors;
+  }
+  for (const [i,a] of json.athletes.entries()){
+    if (!a || typeof a !== 'object'){ errors.push(`athletes[${i}] must be object`); break; }
+    if (!a.id || !a.name) { errors.push(`athletes[${i}] missing id or name`); break; }
+    if (!Array.isArray(a.tests)) { errors.push(`athletes[${i}].tests must be array`); break; }
+    for (const [j,t] of a.tests.entries()){
+      if (!t || typeof t !== 'object'){ errors.push(`tests[${i}][${j}] must be object`); break; }
+      if (!t.date || !t.type || typeof t.time === 'undefined' || typeof t.split === 'undefined'){
+        errors.push(`tests[${i}][${j}] missing date/type/time/split`); break;
+      }
+    }
+  }
+  return errors;
+}
+
+function mergeSeason(current, incoming){
+  const idToAthlete = new Map();
+  for (const a of (current.athletes || [])){
+    idToAthlete.set(a.id, { ...a, tests: Array.isArray(a.tests)? a.tests.slice(): [] });
+  }
+  for (const a of (incoming.athletes || [])){
+    const prev = idToAthlete.get(a.id);
+    if (!prev){
+      idToAthlete.set(a.id, { ...a, tests: Array.isArray(a.tests)? a.tests.slice(): [] });
+    } else {
+      const merged = { ...prev, ...a };
+      const key = t => `${t.date}|${t.type}`;
+      const map = new Map();
+      for (const t of prev.tests || []) map.set(key(t), t);
+      for (const t of a.tests || []) map.set(key(t), t);
+      merged.tests = Array.from(map.values()).sort((x,y)=> (x.date<y.date?1:-1));
+      idToAthlete.set(a.id, merged);
+    }
+  }
+  return { athletes: Array.from(idToAthlete.values()) };
 }

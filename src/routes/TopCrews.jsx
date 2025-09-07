@@ -36,6 +36,8 @@ function parseFrontmatter(md){
         name,
         boat_class: getField('boat_class'),
         steering: getField('steering'),
+        rationale: (()=>{ const m3 = block.match(/rationale:\s*\|([\s\S]*?)(?=\n\s*[a-z_]+:|$)/); return m3? m3[1].trim():'' })(),
+        test_notes: (()=>{ const m4 = block.match(/test_notes:\s*\|([\s\S]*?)(?=\n\s*[a-z_]+:|$)/); return m4? m4[1].trim():'' })(),
         seats,
       })
     }
@@ -54,12 +56,14 @@ export default function TopCrews(){
 
       <div className="themes-grid">
         {data.crews && data.crews.map((c)=> (
-          <div key={c.name} className="plan-card" style={{padding:14}}>
+          <div key={c.name} className="plan-card" style={{padding:14, background:'linear-gradient(135deg,#fff,#f3f4f6)'}}>
             <header style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
               <h3 style={{margin:0}}>{c.name}</h3>
               <span className="badge">{c.boat_class || 'crew'}</span>
             </header>
-            <p className="small" style={{marginTop:0,marginBottom:8}}>{c.steering}</p>
+            {!!c.steering && c.steering.toLowerCase().includes('foot-steer') ? null : (
+              <p className="small" style={{marginTop:0,marginBottom:8}}>{c.steering}</p>
+            )}
             <ul style={{margin:0,paddingLeft:18}}>
               {c.seats?.map(s=> (
                 <li key={s.seat}>
@@ -67,6 +71,18 @@ export default function TopCrews(){
                 </li>
               ))}
             </ul>
+            {c.rationale && (
+              <div style={{marginTop:8}}>
+                <div className="small" style={{fontWeight:600}}>Rationale</div>
+                <p className="small" style={{whiteSpace:'pre-wrap'}}>{c.rationale}</p>
+              </div>
+            )}
+            {c.test_notes && (
+              <div style={{marginTop:4}}>
+                <div className="small" style={{fontWeight:600}}>Test notes</div>
+                <p className="small" style={{whiteSpace:'pre-wrap'}}>{c.test_notes}</p>
+              </div>
+            )}
           </div>
         ))}
       </div>

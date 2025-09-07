@@ -140,7 +140,7 @@ export default function App() {
             <NavLink to="/" end>Dashboard</NavLink>
             <NavLink to="/tests">Testing Log</NavLink>
             <NavLink to="/themes">Focus & Themes</NavLink>
-            <NavLink to="/plan">6-Week Plan</NavLink>
+            <NavLink to="/plan">Top Crews</NavLink>
             <NavLink to="/data">Data</NavLink>
           </nav>
 

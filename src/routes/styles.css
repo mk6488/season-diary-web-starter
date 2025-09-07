@@ -96,6 +96,16 @@ tr.pr td{background:linear-gradient(90deg, rgba(16,185,129,.12), transparent)}
 .theme.theme-efficiency{background:linear-gradient(135deg, #f0f7ff, #ffffff)}
 .theme.theme-power{background:linear-gradient(135deg, #ffe6ea, #ffffff)}
 
+/* Plan */
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.plan-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.plan-card header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.plan-card h3{margin:0;font-size:18px}
+.plan-card ul{margin:0;padding-left:18px}
+.plan-foundation{background:linear-gradient(135deg, #ecfeff, #ffffff)}
+.plan-development{background:linear-gradient(135deg, #f5f3ff, #ffffff)}
+.plan-integration{background:linear-gradient(135deg, #fff7ed, #ffffff)}
+
 /* Toast */
 .toast{
   position:fixed;left:50%;top:16px;transform:translateX(-50%);

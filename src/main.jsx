@@ -6,7 +6,7 @@ const Dashboard = React.lazy(()=>import('./routes/Dashboard.jsx'))
 const Athlete = React.lazy(()=>import('./routes/Athlete.jsx'))
 const Tests = React.lazy(()=>import('./routes/Tests.jsx'))
 const Themes = React.lazy(()=>import('./routes/Themes.jsx'))
-const Plan = React.lazy(()=>import('./routes/Plan.jsx'))
+const TopCrews = React.lazy(()=>import('./routes/TopCrews.jsx'))
 const Data = React.lazy(()=>import('./routes/Data.jsx'))
 const NotFound = React.lazy(()=>import('./routes/NotFound.jsx'))
 
@@ -17,7 +17,7 @@ const router = createBrowserRouter([
       { path: 'athlete/:id', element: <Suspense fallback={<div className="small">Loading…</div>}><Athlete /></Suspense> },
       { path: 'tests', element: <Suspense fallback={<div className="small">Loading…</div>}><Tests /></Suspense> },
       { path: 'themes', element: <Suspense fallback={<div className="small">Loading…</div>}><Themes /></Suspense> },
-      { path: 'plan', element: <Suspense fallback={<div className="small">Loading…</div>}><Plan /></Suspense> },
+      { path: 'plan', element: <Suspense fallback={<div className="small">Loading…</div>}><TopCrews /></Suspense> },
       { path: 'data', element: <Suspense fallback={<div className="small">Loading…</div>}><Data /></Suspense> },
       { path: '*', element: <Suspense fallback={<div className="small">Loading…</div>}><NotFound /></Suspense> },
     ]

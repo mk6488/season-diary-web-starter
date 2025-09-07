@@ -1,0 +1,256 @@
+{
+  "updatedAt": 1757246270862,
+  "athletes": [
+    {
+      "name": "Rocky",
+      "id": "rocky",
+      "focus": "Endurance",
+      "tests": [
+        {
+          "rate": 39,
+          "split": "1:39.8",
+          "date": "2025-09-06",
+          "type": "250m",
+          "time": "0:49.9"
+        },
+        {
+          "rate": 25,
+          "type": "1k@24",
+          "time": "3:49.0",
+          "date": "2025-09-06",
+          "split": "1:54.5"
+        },
+        {
+          "split": "2:00.3",
+          "type": "2k",
+          "rate": null,
+          "date": "2025-05-01",
+          "time": "8:01.5"
+        }
+      ],
+      "coachNote": "1k @24: 3:49.0 → 1:54.5 split @25 → very efficient at capped rate.\n250m: 49.9s → 1:39.8 split @39 → strong sprint with another gear.\n2k check: 1k split ~6s faster than 2k split (8:01.5) → good aerobic efficiency.\nNote: Balanced profile. Strong efficiency plus sprint capacity. Keep building aerobic base; well‑rounded for head races and regattas.\nFocus: Endurance",
+      "experience": "1 year in",
+      "group": "J15"
+    },
+    {
+      "focus": "Endurance",
+      "coachNote": "1k @24: 3:56.6 → 1:58.3 split @26 → slightly higher rate than Rocky; efficient, but buying some speed with extra strokes.\n250m: 49.8s → 1:39.6 split @46 → strong top‑end power and rating ability.\n2k check: Not available. Worth retesting soon.\nNote: Balanced profile. Good gears and aerobic control; next step is sustaining over 2k to confirm endurance.\nFocus: Endurance",
+      "experience": "1 year in",
+      "tests": [
+        {
+          "type": "250m",
+          "rate": 46,
+          "date": "2025-09-06",
+          "split": "1:39.6",
+          "time": "0:49.8"
+        },
+        {
+          "rate": 26,
+          "type": "1k@24",
+          "time": "3:56.6",
+          "split": "1:58.3",
+          "date": "2025-09-06"
+        }
+      ],
+      "group": "J15",
+      "name": "Aidan",
+      "id": "aidan"
+    },
+    {
+      "group": "J15",
+      "name": "Zach",
+      "id": "zach",
+      "coachNote": "1k @24: 3:54.3 → 1:57.1 split @27 → decent speed but slightly high rate → stroke efficiency could improve.\n250m: 50.0s → 1:40.0 split @44 → strong sprint.\n2k check: 2k split 2:06.5 (8:26.1) → 1k split ~9s faster → efficiency gap is there, leaning toward sprint profile.\nNote: Sprint‑leaning athlete. Good power; needs aerobic conditioning and rate control to close the endurance gap.\nFocus: Aerobic base",
+      "tests": [
+        {
+          "split": "1:40.0",
+          "type": "250m",
+          "date": "2025-09-06",
+          "time": "0:50.0",
+          "rate": 44
+        },
+        {
+          "date": "2025-09-06",
+          "type": "1k@24",
+          "rate": 27,
+          "time": "3:54.3",
+          "split": "1:57.1"
+        },
+        {
+          "split": "2:06.5",
+          "date": "2025-05-01",
+          "time": "8:26.1",
+          "rate": null,
+          "type": "2k"
+        }
+      ],
+      "focus": "Aerobic base",
+      "experience": "1 year in"
+    },
+    {
+      "group": "J15",
+      "experience": "1 year in",
+      "coachNote": "1k @24: 4:22.7 → 2:11.3 split @31 → much higher than target rate → relying on rating instead of power per stroke.\n250m: 1:08.5 → came off his seat → sprint not completed properly.\n2k check: 2:42 split (10:48.1) → much slower than peers.\nNote: Still developing. Needs technical consistency, stroke length, and confidence in test pieces before a clear profile.\nFocus: Technique",
+      "tests": [
+        {
+          "type": "250m",
+          "time": "1:08.5",
+          "date": "2025-09-06",
+          "rate": null,
+          "split": "(DNF)"
+        },
+        {
+          "split": "2:11.3",
+          "rate": 31,
+          "type": "1k@24",
+          "date": "2025-09-06",
+          "time": "4:22.7"
+        },
+        {
+          "date": "2025-05-01",
+          "time": "10:48.1",
+          "split": "2:42.0",
+          "type": "2k",
+          "rate": null
+        }
+      ],
+      "id": "harry",
+      "focus": "Technique",
+      "name": "Harry"
+    },
+    {
+      "experience": "1 year in",
+      "focus": "Efficiency",
+      "group": "J15",
+      "tests": [
+        {
+          "type": "250m",
+          "rate": 43,
+          "time": "0:55.4",
+          "date": "2025-09-06",
+          "split": "1:50.8"
+        },
+        {
+          "split": "2:07.3",
+          "type": "1k@24",
+          "rate": 27,
+          "time": "4:14.6",
+          "date": "2025-09-06"
+        }
+      ],
+      "coachNote": "1k @24: 4:14.6 → 2:07.3 split @27 → slightly high on rate, moderate efficiency.\n250m: 55.4s → 1:50.8 split @43 → decent top‑end power.\nNote: Moderate endurance and solid sprint. Balanced potential but needs aerobic development and capped‑rate control.\nFocus: Efficiency",
+      "name": "Henry C",
+      "id": "henryc"
+    },
+    {
+      "coachNote": "1k @24: 4:19.7 → 2:09.8 split @26 → endurance needs work; slower split at a reasonable rate.\n250m: 57.6s → 1:55.2 split @44 → sprint weaker than peers.\n2k check: 2:16 split (9:07.4) → 1k only 6s faster → limited aerobic efficiency.\nNote: Endurance‑leaning but lacking power. Needs both aerobic conditioning and sprint strength. Development athlete.\nFocus: Power",
+      "experience": "1 year in",
+      "id": "reuben",
+      "tests": [
+        {
+          "rate": 44,
+          "time": "0:57.6",
+          "split": "1:55.2",
+          "date": "2025-09-06",
+          "type": "250m"
+        },
+        {
+          "split": "2:09.8",
+          "date": "2025-09-06",
+          "rate": 26,
+          "type": "1k@24",
+          "time": "4:19.7"
+        },
+        {
+          "split": "2:16.0",
+          "rate": null,
+          "type": "2k",
+          "date": "2025-05-01",
+          "time": "9:07.4"
+        }
+      ],
+      "focus": "Power",
+      "group": "J15",
+      "name": "Reuben"
+    },
+    {
+      "coachNote": "1k @24: 4:43.8 → 2:21.9 split @26 → still building base; slowest 1k.\n250m: 57.4s → 1:54.8 split @41 → surprisingly strong sprint for a new J14.\n2k check: No data yet.\nNote: Classic “new rower” profile — weak aerobic base, but raw power potential. Focus on technical development and aerobic conditioning.\nFocus: Technique + Endurance",
+      "group": "J14",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "type": "250m",
+          "split": "1:54.8",
+          "rate": 41,
+          "time": "0:57.4"
+        },
+        {
+          "rate": 26,
+          "time": "4:43.8",
+          "split": "2:21.9",
+          "date": "2025-09-06",
+          "type": "1k@24"
+        }
+      ],
+      "name": "Virgil",
+      "id": "virgil",
+      "focus": "Technique + Endurance",
+      "experience": "new"
+    },
+    {
+      "name": "Henry B",
+      "group": "J15",
+      "focus": "Aerobic base",
+      "coachNote": "1k @24: 4:07.3 → 2:03.6 split @28 → decent speed but slightly high rate.\n250m: 54.1s → 1:48.2 split @45 → strong sprint.\nNote: Sprint‑leaning with developing endurance. Good power but needs aerobic efficiency at controlled rate.\nFocus: Aerobic base",
+      "id": "henryb",
+      "experience": "1 year in",
+      "tests": [
+        {
+          "date": "2025-09-06",
+          "time": "0:54.1",
+          "rate": 45,
+          "split": "1:48.2",
+          "type": "250m"
+        },
+        {
+          "date": "2025-09-06",
+          "split": "2:03.6",
+          "rate": 28,
+          "type": "1k@24",
+          "time": "4:07.3"
+        }
+      ]
+    },
+    {
+      "id": "henryt",
+      "experience": "1 year in",
+      "name": "Henry T",
+      "tests": [
+        {
+          "time": "0:51.3",
+          "type": "250m",
+          "split": "1:42.6",
+          "rate": 44,
+          "date": "2025-09-06"
+        },
+        {
+          "type": "1k@24",
+          "split": "2:02.2",
+          "time": "4:04.5",
+          "rate": 27,
+          "date": "2025-09-06"
+        },
+        {
+          "date": "2025-05-01",
+          "split": "2:11.0",
+          "type": "2k",
+          "time": "8:45.5",
+          "rate": null
+        }
+      ],
+      "coachNote": "1k @24: 4:04.5 → 2:02.2 split @27 → strong for J14; slightly high rate but moving well.\n250m: 51.3s → 1:42.6 split @44 → very strong sprint relative to peers.\n2k check: 2:11 split (8:45.5) → 1k split ~9s faster → good efficiency and aerobic base for age.\nNote: Balanced with strong potential. Good aerobic and strong sprint. One of the more promising younger athletes.\nFocus: Balanced development",
+      "focus": "Balanced development",
+      "group": "J14"
+    }
+  ]
+}

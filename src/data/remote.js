@@ -231,6 +231,41 @@ export async function renameTestId(seasonId, athleteId, oldDate, oldType, newDat
   batch.set(seasonRef, { updatedAt: Date.now() }, { merge: true });
   await batch.commit();
 }
+
+// Rename by full test doc ID (e.g., "rocky_2025-09-06_1k-24" → "rocky-hooper_2025-09-06_1k-24")
+export async function renameTestDoc(seasonId, oldTestId, newTestId, publisher){
+  if (!oldTestId || !newTestId) throw new Error('Provide old and new test IDs');
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+  const oldRef = doc(seasonRef, 'tests', oldTestId);
+  const newRef = doc(seasonRef, 'tests', newTestId);
+  if (oldRef.path === newRef.path) throw new Error('Old and new test IDs are identical');
+
+  const snap = await getDoc(oldRef);
+  if (!snap.exists()) throw new Error('Original test not found');
+  const t = snap.data();
+
+  // Try to parse athleteId and date from the new ID: {athleteId}_{YYYY-MM-DD}_rest
+  let parsedAthleteId = undefined;
+  let parsedDate = undefined;
+  const parts = newTestId.split('_');
+  if (parts.length >= 2){
+    parsedAthleteId = parts[0];
+    parsedDate = parts[1];
+  }
+
+  const batch = writeBatch(db);
+  batch.set(newRef, {
+    ...t,
+    athleteId: parsedAthleteId ?? t.athleteId,
+    date: parsedDate ?? t.date,
+    updatedAt: serverTimestamp(),
+    updatedByUid: publisher?.uid ?? null,
+    updatedByEmail: publisher?.email ?? null,
+  }, { merge: true });
+  batch.delete(oldRef);
+  batch.set(seasonRef, { updatedAt: Date.now() }, { merge: true });
+  await batch.commit();
+}
 // Add or update a single test for an athlete (idempotent)
 export async function publishTest(seasonId, athlete, test, publisher){
   const seasonRef = doc(db, 'seasonDiary', seasonId);

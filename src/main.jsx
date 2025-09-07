@@ -26,8 +26,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(<RouterProvider router={router} />)
 
-// register SW for PWA (opt-in via env to avoid stale chunks in prod)
-if (import.meta.env.VITE_ENABLE_SW === '1' && 'serviceWorker' in navigator) {
+// register SW for PWA
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js').catch(()=>{})
   })

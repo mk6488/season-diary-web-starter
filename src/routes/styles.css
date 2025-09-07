@@ -48,6 +48,7 @@ body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial;background:v
 .sidebar a{color:#1e3a8a;text-decoration:none;padding:10px 12px;border-radius:10px;display:block}
 .sidebar a.active{background:#e8efff;color:#0b1e3a}
 .sidebar .footnote{margin-top:auto;opacity:.8}
+.sidebar .close-btn{display:none}
 
 .main{
   grid-area:main;

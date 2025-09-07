@@ -22,6 +22,8 @@ export default function Data(){
   const [mTime, setMTime] = useState('');
   const [mSplit, setMSplit] = useState('');
   const [mRate, setMRate] = useState('');
+  const [mValue, setMValue] = useState('');
+  const [mUnit, setMUnit] = useState('');
 
   // Auth state
   useEffect(() => onAuthStateChanged(auth, u => setUser(u)), []);
@@ -160,6 +162,8 @@ export default function Data(){
             <input placeholder="Time (e.g., 3:49.0)" value={mTime} onChange={e=>setMTime(e.target.value)} />
             <input placeholder="Split (e.g., 1:54.5)" value={mSplit} onChange={e=>setMSplit(e.target.value)} />
             <input placeholder="Rate (e.g., 24)" value={mRate} onChange={e=>setMRate(e.target.value)} />
+            <input placeholder="Value (e.g., 150)" value={mValue ?? ''} onChange={e=>setMValue(e.target.value)} />
+            <input placeholder="Unit (e.g., kg)" value={mUnit ?? ''} onChange={e=>setMUnit(e.target.value)} />
           </div>
           <div style={{marginTop:8}}>
             <button onClick={async ()=>{
@@ -168,11 +172,11 @@ export default function Data(){
                 const rateNum = mRate === '' ? null : Number(mRate);
                 await publishTest(CURRENT_SEASON_ID,
                   { id:mId, name:mName },
-                  { type:mType, date:mDate, time:mTime, split:mSplit, rate: Number.isNaN(rateNum)? null: rateNum },
+                  { type:mType, date:mDate, time:mTime, split:mSplit, rate: Number.isNaN(rateNum)? null: rateNum, value: mValue===''? undefined: Number(mValue), unit: mUnit||undefined },
                   { uid:user.uid, email:user.email }
                 );
                 setMsg('Test saved ✓');
-                setMTime(''); setMSplit(''); setMRate('');
+                setMTime(''); setMSplit(''); setMRate(''); setMValue(''); setMUnit('');
               }catch(e){ setMsg('Save error: ' + e.message); }
             }}>Save test</button>
           </div>
@@ -197,8 +201,12 @@ function validateSeason(json){
     if (!Array.isArray(a.tests)) { errors.push(`athletes[${i}].tests must be array`); break; }
     for (const [j,t] of a.tests.entries()){
       if (!t || typeof t !== 'object'){ errors.push(`tests[${i}][${j}] must be object`); break; }
-      if (!t.date || !t.type || typeof t.time === 'undefined' || typeof t.split === 'undefined'){
-        errors.push(`tests[${i}][${j}] missing date/type/time/split`); break;
+      if (!t.date || !t.type){ errors.push(`tests[${i}][${j}] missing date or type`); break; }
+      // Either time/split (erg/water) OR value/unit (strength), allow both too
+      const hasTime = typeof t.time !== 'undefined' && typeof t.split !== 'undefined';
+      const hasValue = typeof t.value !== 'undefined' && typeof t.unit !== 'undefined';
+      if (!hasTime && !hasValue){
+        errors.push(`tests[${i}][${j}] must include time/split or value/unit`); break;
       }
     }
   }

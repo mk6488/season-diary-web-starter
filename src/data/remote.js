@@ -47,6 +47,8 @@ export async function fetchRemoteSeason(seasonId = '2025'){
         time: t.time,
         split: t.split,
         rate: typeof t.rate === 'number' || t.rate === null ? t.rate : Number(t.rate) || null,
+        value: typeof t.value === 'number' ? t.value : (Number(t.value) || undefined),
+        unit: t.unit,
       });
     });
 
@@ -103,6 +105,8 @@ export async function publishSeason(seasonId, data, publisher){
         time: t.time ?? '',
         split: t.split ?? '',
         rate: typeof t.rate === 'number' || t.rate === null ? t.rate : Number(t.rate) || null,
+        value: typeof t.value === 'number' ? t.value : (t.value != null ? Number(t.value) : undefined),
+        unit: t.unit,
         updatedAt: serverTimestamp(),
         createdAt: serverTimestamp(),
         updatedByUid: publisher?.uid ?? null,
@@ -156,6 +160,8 @@ export async function publishTest(seasonId, athlete, test, publisher){
     time: test.time ?? '',
     split: test.split ?? '',
     rate: typeof test.rate === 'number' || test.rate === null ? test.rate : Number(test.rate) || null,
+    value: typeof test.value === 'number' ? test.value : (test.value != null ? Number(test.value) : undefined),
+    unit: test.unit,
     updatedAt: serverTimestamp(),
     createdAt: serverTimestamp(),
     updatedByUid: publisher?.uid ?? null,

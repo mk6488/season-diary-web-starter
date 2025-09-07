@@ -126,3 +126,42 @@ function makeTestId(athleteId, date, type){
   const safeType = String(type).toLowerCase().replace(/[^a-z0-9]+/g, '-');
   return `${athleteId}_${date}_${safeType}`;
 }
+
+// Add or update a single test for an athlete (idempotent)
+export async function publishTest(seasonId, athlete, test, publisher){
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+  if (!athlete?.id || !athlete?.name) throw new Error('athlete.id and athlete.name are required');
+  if (!test?.date || !test?.type) throw new Error('test.date and test.type are required');
+
+  const aRef = doc(seasonRef, 'athletes', athlete.id);
+  const tRef = doc(seasonRef, 'tests', makeTestId(athlete.id, test.date, test.type));
+
+  const batch = writeBatch(db);
+  batch.set(aRef, {
+    name: athlete.name,
+    group: athlete.group ?? '',
+    experience: athlete.experience ?? '',
+    focus: athlete.focus ?? '',
+    coachNote: athlete.coachNote ?? '',
+    updatedAt: serverTimestamp(),
+    updatedByUid: publisher?.uid ?? null,
+    updatedByEmail: publisher?.email ?? null,
+  }, { merge: true });
+
+  batch.set(tRef, {
+    athleteId: athlete.id,
+    athleteName: athlete.name,
+    date: test.date,
+    type: test.type,
+    time: test.time ?? '',
+    split: test.split ?? '',
+    rate: typeof test.rate === 'number' || test.rate === null ? test.rate : Number(test.rate) || null,
+    updatedAt: serverTimestamp(),
+    createdAt: serverTimestamp(),
+    updatedByUid: publisher?.uid ?? null,
+    updatedByEmail: publisher?.email ?? null,
+  }, { merge: true });
+
+  batch.set(seasonRef, { updatedAt: Date.now() }, { merge: true });
+  await batch.commit();
+}

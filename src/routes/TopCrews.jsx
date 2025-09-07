@@ -102,8 +102,8 @@ export default function TopCrews(){
       </div>
 
       <div className="themes-grid">
-        {data.crews && data.crews.map((c)=> (
-          <div key={c.name} className="plan-card" style={{padding:14, background:'linear-gradient(135deg,#fff,#f3f4f6)'}}>
+        {data.crews && data.crews.map((c, i)=> (
+          <div key={c.name} className={`crew-card crew-${i%5}`}>
             <header style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
               <h3 style={{margin:0}}>{c.name}</h3>
               <span className="badge">{c.boat_class || 'crew'}</span>

@@ -105,6 +105,12 @@ tr.pr td{background:linear-gradient(90deg, rgba(16,185,129,.12), transparent)}
 .plan-foundation{background:linear-gradient(135deg, #ecfeff, #ffffff)}
 .plan-development{background:linear-gradient(135deg, #f5f3ff, #ffffff)}
 .plan-integration{background:linear-gradient(135deg, #fff7ed, #ffffff)}
+.crew-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.crew-0{background:linear-gradient(135deg,#e7f5ff,#ffffff)}
+.crew-1{background:linear-gradient(135deg,#e6ffe6,#ffffff)}
+.crew-2{background:linear-gradient(135deg,#fff7e6,#ffffff)}
+.crew-3{background:linear-gradient(135deg,#f0f7ff,#ffffff)}
+.crew-4{background:linear-gradient(135deg,#ffe6ea,#ffffff)}
 
 /* Data page - stats */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}

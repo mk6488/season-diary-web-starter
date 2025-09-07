@@ -35,8 +35,7 @@ crews:
         athlete: "Zan Tu Weeks"
     alternates: []
     rationale: |
-      Rocky set a fast, efficient 1k@24 and is a reliable rhythm-setter. Wilf brings strong sustainable power.
-      Zach adds mid-race punch from a strong 250m. Zan showed excellent rate discipline and calm, making him a steady bow/steer.
+      Rocky set a fast, efficient 1k@24 and is a reliable rhythm-setter. Wilf brings strong sustainable power. Zach adds mid-race punch from a strong 250m. Zan showed excellent rate discipline and calm, making him a steady bow/steer.
     test_notes: |
       Also test the variant with Zan stroking and Rocky bowing (see verification plan).
   - name: "J15 B Quad"
@@ -54,8 +53,7 @@ crews:
     alternates:
       - "Borrow-up option if required: Henry Thorpe (J14) into Bow/2 to stabilise platform (subject to event rules)."
     rationale: |
-      Byrne can set an assertive but controlled rhythm. Reuben supplies force in the engine room.
-      Harry is protected in 2-seat while technique consolidates. Cooper provides tidy bladework and reliable steering in bow.
+      Byrne can set an assertive but controlled rhythm. Reuben supplies force in the engine room. Harry is protected in 2-seat while technique consolidates. Cooper provides tidy bladework and reliable steering in bow.
 verification_plan:
   rate_capped:
     session: "2 × 1000 m @24 spm, last 200 m free-rate"

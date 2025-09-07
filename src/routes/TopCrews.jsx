@@ -42,7 +42,54 @@ function parseFrontmatter(md){
       })
     }
   }
-  return { title:get('title'), date:get('date'), squad:get('squad'), crews }
+  // Verification plan
+  const verStart = yml.indexOf('\nverification_plan:')
+  const selStart = yml.indexOf('\nselection_criteria:')
+  const nextStart = yml.indexOf('\nnext_actions:')
+  const verBlock = verStart >= 0 ? yml.slice(verStart, selStart>verStart?selStart:undefined) : ''
+  function extractBlock(parent, key){
+    const m = parent.match(new RegExp(`${key}:([\\s\\S]*?)(?=\\n\\s*[a-z_]+:|$)`))
+    return m ? m[1] : ''
+  }
+  function parsePlan(block){
+    if(!block) return null
+    const session = (block.match(/session:\s*"([^"]*)"/)||[])[1] || ''
+    const purpose = (block.match(/purpose:\s*"([^"]*)"/)||[])[1] || ''
+    const metricsBlock = extractBlock(block, 'metrics')
+    const metrics = metricsBlock
+      ? metricsBlock.split(/\n/).map(s=>s.trim()).filter(s=>s.startsWith('-')).map(s=> s.replace(/^-\s*"?/, '').replace(/"$/, ''))
+      : []
+    return { session, purpose, metrics }
+  }
+  const verification_plan = verBlock ? {
+    rate_capped: parsePlan(extractBlock(verBlock, 'rate_capped')),
+    race_rate: parsePlan(extractBlock(verBlock, 'race_rate')),
+    seat_races: (()=>{
+      const block = extractBlock(verBlock, 'seat_races')
+      if(!block) return null
+      const crewsMap = {}
+      const crewRe = /(\w+):\s*\n([\s\S]*?)(?=\n\s*\w+:|$)/g
+      let mcrew
+      while((mcrew = crewRe.exec(block))){
+        const crewName = mcrew[1].replace(/_/g,' ')
+        const items = mcrew[2].split(/\n/).map(s=>s.trim()).filter(s=>s.startsWith('-')).map(s=> s.replace(/^-\s*"?/, '').replace(/"$/, ''))
+        crewsMap[crewName] = items
+      }
+      return crewsMap
+    })()
+  } : null
+
+  // Selection criteria and next actions as simple lists
+  function parseList(startIdx){
+    if(startIdx < 0) return []
+    const endIdx = (startIdx === selStart && nextStart>selStart) ? nextStart : undefined
+    const block = yml.slice(startIdx, endIdx)
+    return block.split(/\n/).map(s=>s.trim()).filter(s=>s.startsWith('-')).map(s=> s.replace(/^-\s*"?/, '').replace(/"$/, ''))
+  }
+  const selection_criteria = parseList(selStart)
+  const next_actions = parseList(nextStart)
+
+  return { title:get('title'), date:get('date'), squad:get('squad'), crews, verification_plan, selection_criteria, next_actions }
 }
 
 export default function TopCrews(){
@@ -86,6 +133,65 @@ export default function TopCrews(){
           </div>
         ))}
       </div>
+      {data.verification_plan && (
+        <div className="card">
+          <h2>Verification Plan</h2>
+          <div className="plan-grid">
+            {data.verification_plan.rate_capped && (
+              <div className="plan-card"><h3 style={{marginTop:0}}>Rate-capped</h3>
+                <p className="small"><strong>Session:</strong> {data.verification_plan.rate_capped.session}</p>
+                <p className="small"><strong>Purpose:</strong> {data.verification_plan.rate_capped.purpose}</p>
+                {data.verification_plan.rate_capped.metrics?.length>0 && (
+                  <ul className="small" style={{marginTop:8}}>
+                    {data.verification_plan.rate_capped.metrics.map((m,i)=>(<li key={i}>{m}</li>))}
+                  </ul>
+                )}
+              </div>
+            )}
+            {data.verification_plan.race_rate && (
+              <div className="plan-card"><h3 style={{marginTop:0}}>Race-rate</h3>
+                <p className="small"><strong>Session:</strong> {data.verification_plan.race_rate.session}</p>
+                <p className="small"><strong>Purpose:</strong> {data.verification_plan.race_rate.purpose}</p>
+                {data.verification_plan.race_rate.metrics?.length>0 && (
+                  <ul className="small" style={{marginTop:8}}>
+                    {data.verification_plan.race_rate.metrics.map((m,i)=>(<li key={i}>{m}</li>))}
+                  </ul>
+                )}
+              </div>
+            )}
+            {data.verification_plan.seat_races && (
+              <div className="plan-card"><h3 style={{marginTop:0}}>Seat races</h3>
+                {Object.entries(data.verification_plan.seat_races).map(([k, items])=> (
+                  <div key={k} style={{marginBottom:8}}>
+                    <div className="small" style={{fontWeight:600}}>{k}</div>
+                    <ul className="small" style={{marginTop:4}}>
+                      {items.map((it,i)=>(<li key={i}>{it}</li>))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {data.selection_criteria?.length>0 && (
+        <div className="card">
+          <h2>Selection Criteria</h2>
+          <ul className="small" style={{marginTop:6}}>
+            {data.selection_criteria.map((c,i)=>(<li key={i}>{c}</li>))}
+          </ul>
+        </div>
+      )}
+
+      {data.next_actions?.length>0 && (
+        <div className="card">
+          <h2>Next Actions</h2>
+          <ul className="small" style={{marginTop:6}}>
+            {data.next_actions.map((n,i)=>(<li key={i}>{n}</li>))}
+          </ul>
+        </div>
+      )}
     </div>
   )
 }

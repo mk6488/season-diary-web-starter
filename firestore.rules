@@ -20,8 +20,8 @@ service cloud.firestore {
       return request.auth != null && (
         // Either restrict by UID or by custom claims
         request.auth.uid in [
-          // TODO: replace with your Firebase auth UID(s)
-          "REPLACE_WITH_COACH_UID"
+          // Coach UID(s)
+          "sLGBzcsx35fQtcxp0R75Zvnmefm1"
         ] || (request.auth.token.coach == true)
       );
     }

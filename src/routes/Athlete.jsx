@@ -19,10 +19,11 @@ export default function Athlete(){
         <h3>Testing History</h3>
         <div className="table-wrap">
           <table className="table">
-            <thead><tr><th>Date</th><th>Test</th><th>Time</th><th>Δ vs prev</th><th>Split</th><th>Rate</th></tr></thead>
+            <thead><tr><th>Date</th><th>Test</th><th>Time</th><th>Δ vs prev (same test)</th><th>Split</th><th>Rate</th></tr></thead>
             <tbody>
               {a.tests.map((t,i)=>{
-                const prev = a.tests[i+1];
+                // find previous entry of the same test type for this athlete
+                const prev = a.tests.slice(i+1).find(x => x.type === t.type);
                 const currSec = parseTimeToSeconds(t.time);
                 const prevSec = parseTimeToSeconds(prev?.time);
                 const delta = Number.isFinite(currSec) && Number.isFinite(prevSec) ? currSec - prevSec : NaN;

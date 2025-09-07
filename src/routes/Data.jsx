@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { publishSeason, fetchRemoteSeason, publishTest, renameAthleteId } from '../data/remote';
+import { publishSeason, fetchRemoteSeason, publishTest, renameAthleteId, renameTestId } from '../data/remote';
 import { CURRENT_SEASON_ID } from '../data/constants';
 import { auth } from '../firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
@@ -27,6 +27,11 @@ export default function Data(){
   const [oldId, setOldId] = useState('');
   const [newId, setNewId] = useState('');
   const [newName, setNewName] = useState('');
+  const [tAthleteId, setTAthleteId] = useState('');
+  const [tOldDate, setTOldDate] = useState('');
+  const [tOldType, setTOldType] = useState('');
+  const [tNewDate, setTNewDate] = useState('');
+  const [tNewType, setTNewType] = useState('');
 
   // Auth state
   useEffect(() => onAuthStateChanged(auth, u => setUser(u)), []);
@@ -202,6 +207,29 @@ export default function Data(){
                 setMsg('Athlete ID renamed ✓'); setOldId(''); setNewId(''); setNewName('');
               }catch(e){ setMsg('Rename error: ' + e.message); }
             }}>Rename</button>
+          </div>
+        </div>
+      )}
+
+      {user && (
+        <div className="card" style={{padding:12, marginTop:12}}>
+          <h3>Rename test ID (date/type)</h3>
+          <div className="small" style={{marginBottom:8}}>Use this to correct a test’s date or type. This will move the document to a new deterministic ID.</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fit,minmax(220px,1fr))',gap:8}}>
+            <input placeholder="Athlete ID" value={tAthleteId} onChange={e=>setTAthleteId(e.target.value)} />
+            <input type="date" placeholder="Old date" value={tOldDate} onChange={e=>setTOldDate(e.target.value)} />
+            <input placeholder="Old type (e.g., 1k@24)" value={tOldType} onChange={e=>setTOldType(e.target.value)} />
+            <input type="date" placeholder="New date (optional)" value={tNewDate} onChange={e=>setTNewDate(e.target.value)} />
+            <input placeholder="New type (optional)" value={tNewType} onChange={e=>setTNewType(e.target.value)} />
+          </div>
+          <div style={{marginTop:8}}>
+            <button onClick={async ()=>{
+              try{
+                if(!tAthleteId || !tOldDate || !tOldType) throw new Error('Please fill athlete ID, old date, and old type');
+                await renameTestId(CURRENT_SEASON_ID, tAthleteId, tOldDate, tOldType, tNewDate||undefined, tNewType||undefined, { uid:user.uid, email:user.email });
+                setMsg('Test ID renamed ✓'); setTAthleteId(''); setTOldDate(''); setTOldType(''); setTNewDate(''); setTNewType('');
+              }catch(e){ setMsg('Rename error: ' + e.message); }
+            }}>Rename test</button>
           </div>
         </div>
       )}

@@ -201,6 +201,36 @@ export async function renameAthleteId(seasonId, oldId, newId, newName, publisher
 
   await batch.commit();
 }
+
+// Rename a single test document ID (e.g., change date and/or type) for an athlete
+export async function renameTestId(seasonId, athleteId, oldDate, oldType, newDate, newType, publisher){
+  if (!athleteId || !oldDate || !oldType) throw new Error('athleteId, oldDate and oldType are required');
+  const fromDate = oldDate;
+  const fromType = oldType;
+  const toDate = newDate || oldDate;
+  const toType = newType || oldType;
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+  const oldRef = doc(seasonRef, 'tests', makeTestId(athleteId, fromDate, fromType));
+  const newRef = doc(seasonRef, 'tests', makeTestId(athleteId, toDate, toType));
+  if (oldRef.path === newRef.path) throw new Error('Old and new test IDs are identical');
+
+  const snap = await getDoc(oldRef);
+  if (!snap.exists()) throw new Error('Original test not found');
+  const t = snap.data();
+
+  const batch = writeBatch(db);
+  batch.set(newRef, {
+    ...t,
+    date: toDate,
+    type: toType,
+    updatedAt: serverTimestamp(),
+    updatedByUid: publisher?.uid ?? null,
+    updatedByEmail: publisher?.email ?? null,
+  }, { merge: true });
+  batch.delete(oldRef);
+  batch.set(seasonRef, { updatedAt: Date.now() }, { merge: true });
+  await batch.commit();
+}
 // Add or update a single test for an athlete (idempotent)
 export async function publishTest(seasonId, athlete, test, publisher){
   const seasonRef = doc(db, 'seasonDiary', seasonId);

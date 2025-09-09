@@ -21,8 +21,10 @@ export default function App() {
   const [toast, setToast] = useState('');
   const location = useLocation();
 
-  // Fetch central data once; ensureRemote reloads the page only if data changed
-  useEffect(() => { ensureRemote(CURRENT_SEASON_ID); }, []);
+  // Fetch central data once; when done, trigger a re-render so views read fresh data
+  useEffect(() => {
+    (async () => { await ensureRemote(CURRENT_SEASON_ID); setSyncInfo(readSyncInfo()); })();
+  }, []);
 
   // Close drawer when route changes
   useEffect(() => { setOpen(false); }, [location]);

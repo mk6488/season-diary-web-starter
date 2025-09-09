@@ -68,6 +68,9 @@ export default function Tests(){
             <th aria-sort={ariaFor('time')}>
               <button className="th-sort" onClick={()=>toggleSort('time')}>Time <span className="sort-caret">{caret('time')}</span></button>
             </th>
+            <th>
+              Δ vs prev
+            </th>
             <th aria-sort={ariaFor('split')}>
               <button className="th-sort" onClick={()=>toggleSort('split')}>Split <span className="sort-caret">{caret('split')}</span></button>
             </th>

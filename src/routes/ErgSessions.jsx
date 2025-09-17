@@ -1,4 +1,6 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
+import { fetchErgSessions } from '../data/remote'
+import { CURRENT_SEASON_ID } from '../data/constants'
 
 // Vite glob import: load all .md files placed under /src/erg-sessions/
 // We also try to include the project-root erg_session.md via an explicit import with ?raw
@@ -31,8 +33,33 @@ function extractDateFromMarkdown(md) {
 
 function useSessions() {
   const [error, setError] = useState('')
+  const [cloud, setCloud] = useState(null)
+
+  useEffect(() => {
+    let active = true
+    fetchErgSessions(CURRENT_SEASON_ID)
+      .then((rows) => { if (active) setCloud(Array.isArray(rows) ? rows : []) })
+      .catch(() => { if (active) setCloud([]) })
+    return () => { active = false }
+  }, [])
   const sessions = useMemo(() => {
     try {
+      // Prefer cloud if available
+      if (Array.isArray(cloud) && cloud.length) {
+        const mapped = cloud.map((c) => {
+          const date = typeof c.date === 'string' ? new Date(c.date) : (c.date?.toDate ? c.date.toDate() : null)
+          return {
+            id: c.id,
+            md: String(c.markdown || ''),
+            date: date && !isNaN(date?.getTime?.()) ? date : extractDateFromMarkdown(String(c.markdown || '')),
+            title: c.title || (String(c.markdown || '').split(/\r?\n/)[0].replace(/^#\s*/, '')),
+          }
+        })
+        const valid = mapped.filter((s) => s.date instanceof Date)
+        valid.sort((a, b) => b.date.getTime() - a.date.getTime())
+        return valid
+      }
+
       const list = []
       // Add root-level sessions
       Object.entries(rootSessionModules).forEach(([path, md]) => {
@@ -53,7 +80,7 @@ function useSessions() {
       setError('Failed to load erg sessions')
       return []
     }
-  }, [])
+  }, [cloud])
 
   return { sessions, error }
 }

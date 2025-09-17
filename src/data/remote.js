@@ -10,6 +10,8 @@ import {
   serverTimestamp,
   query,
   where,
+  orderBy,
+  addDoc,
 } from 'firebase/firestore';
 
 // READ central JSON: supports either { athletes:[...] } or legacy { json:"..." }
@@ -265,6 +267,47 @@ export async function renameTestDoc(seasonId, oldTestId, newTestId, publisher){
   batch.delete(oldRef);
   batch.set(seasonRef, { updatedAt: Date.now() }, { merge: true });
   await batch.commit();
+}
+
+// --- Erg sessions ---
+
+// Fetch erg sessions for a season, newest first
+export async function fetchErgSessions(seasonId = '2025'){
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+  const ergCol = collection(seasonRef, 'ergSessions');
+  const q = query(ergCol, orderBy('date', 'desc'));
+  const snap = await getDocs(q);
+  const rows = [];
+  snap.forEach((d) => {
+    const data = d.data();
+    rows.push({ id: d.id, ...data });
+  });
+  return rows;
+}
+
+// Publish a single erg session; if id provided, upsert with that id, otherwise add new
+export async function publishErgSession(seasonId, session, publisher){
+  if (!session || !session.markdown) throw new Error('session.markdown is required');
+  if (!session.date && typeof session.date !== 'number') throw new Error('session.date is required');
+
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+  const ergCol = collection(seasonRef, 'ergSessions');
+
+  const payload = {
+    title: session.title || '',
+    markdown: session.markdown,
+    date: session.date, // ISO string (YYYY-MM-DD) or timestamp; consumer must handle
+    updatedAt: serverTimestamp(),
+    createdAt: serverTimestamp(),
+    updatedByUid: publisher?.uid ?? null,
+    updatedByEmail: publisher?.email ?? null,
+  };
+
+  if (session.id) {
+    await setDoc(doc(ergCol, session.id), payload, { merge: true });
+  } else {
+    await addDoc(ergCol, payload);
+  }
 }
 // Add or update a single test for an athlete (idempotent)
 export async function publishTest(seasonId, athlete, test, publisher){

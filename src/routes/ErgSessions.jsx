@@ -78,11 +78,11 @@ function useSessions() {
     return map
   }, [reports])
 
-  return { sessions, error }
+  return { sessions, error, reportByDate }
 }
 
 export default function ErgSessions() {
-  const { sessions, error } = useSessions()
+  const { sessions, error, reportByDate } = useSessions()
   const [printingId, setPrintingId] = useState(null)
   const detailRefs = useRef({})
 

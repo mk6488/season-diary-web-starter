@@ -79,23 +79,29 @@ function useSessions() {
   }, [reports])
 
   // Local example reports (for pre-Firestore testing)
-  const localReportDates = useMemo(() => {
+  const { localReportsMap, localReportDates } = useMemo(() => {
     const modules = import.meta.glob('../../content/erg-sessions/erg_session_reports_*.md', { query: '?raw', import: 'default', eager: true })
+    const map = new Map()
     const set = new Set()
-    Object.keys(modules).forEach((path) => {
+    Object.entries(modules).forEach(([path, md]) => {
       const m = path.match(/erg_session_reports_(\d{4})_(\d{2})_(\d{2})\.md$/)
-      if (m) set.add(`${m[1]}-${m[2]}-${m[3]}`)
+      if (m){
+        const key = `${m[1]}-${m[2]}-${m[3]}`
+        set.add(key)
+        map.set(key, String(md))
+      }
     })
-    return set
+    return { localReportsMap: map, localReportDates: set }
   }, [])
 
-  return { sessions, error, reportByDate, localReportDates }
+  return { sessions, error, reportByDate, localReportDates, localReportsMap }
 }
 
 export default function ErgSessions() {
-  const { sessions, error, reportByDate, localReportDates } = useSessions()
+  const { sessions, error, reportByDate, localReportDates, localReportsMap } = useSessions()
   const [printingId, setPrintingId] = useState(null)
   const detailRefs = useRef({})
+  const [modal, setModal] = useState({ open:false, title:'', markdown:'', date:'' })
 
   const handlePrint = (id) => {
     const detailsEl = detailRefs.current[id]
@@ -110,6 +116,16 @@ export default function ErgSessions() {
     window.addEventListener('afterprint', onAfter)
     setTimeout(() => window.print(), 50)
   }
+
+  const openReport = (dateKey) => {
+    if (!dateKey) return
+    let md = reportByDate.get(dateKey)?.markdown
+    if (!md) md = localReportsMap.get(dateKey)
+    if (!md) return
+    const title = String(md).split(/\r?\n/)[0].replace(/^#\s*/, '')
+    setModal({ open:true, title, markdown:String(md), date:dateKey })
+  }
+  const closeReport = () => setModal({ open:false, title:'', markdown:'', date:'' })
 
   return (
     <section className="card">
@@ -139,7 +155,16 @@ export default function ErgSessions() {
                       {s.date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
                     </span>
                   )}
-                  {(() => { const key = s.date?.toISOString().slice(0,10); const hasReport = key && (reportByDate.has(key) || localReportDates.has(key)); return hasReport ? (<span className="report-dot" title="Report available" aria-label="Report available" />) : null })()}
+                  {(() => { const key = s.date?.toISOString().slice(0,10); const hasReport = key && (reportByDate.has(key) || localReportDates.has(key)); return hasReport ? (
+                    <>
+                      <span className="report-dot" title="Report available" aria-label="Report available" />
+                      <button
+                        className="chip"
+                        onMouseDown={(e)=>{e.preventDefault(); e.stopPropagation();}}
+                        onClick={(e)=>{e.preventDefault(); e.stopPropagation(); openReport(key)}}
+                      >Report</button>
+                    </>
+                  ) : null })()}
                 </summary>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginTop:8 }}>
                   {(() => { const key = s.date?.toISOString().slice(0,10); const hasReport = key && (reportByDate.has(key) || localReportDates.has(key)); return hasReport ? (<a className="chip" href={`/erg-reports/${key}`}>View report</a>) : null })()}
@@ -155,8 +180,25 @@ export default function ErgSessions() {
           ))}
         </div>
       )}
+
+      {modal.open && (
+        <div className="report-overlay" role="dialog" aria-modal="true" aria-labelledby="report-title" onClick={closeReport}>
+          <div className="report-modal" onClick={(e)=>e.stopPropagation()}>
+            <div className="report-head">
+              <h3 id="report-title" style={{ margin:0 }}>{modal.title}</h3>
+              <button className="report-close" onClick={closeReport} aria-label="Close">✕</button>
+            </div>
+            <div className="report-body">
+              <div className="markdown">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{modal.markdown}</ReactMarkdown>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   )
 }
+
 
 

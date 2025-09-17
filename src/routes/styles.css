@@ -82,6 +82,14 @@ tr.pr td{background:linear-gradient(90deg, rgba(16,185,129,.12), transparent)}
 /* Small report presence indicator on collapsed items */
 .report-dot{display:inline-block;width:10px;height:10px;border-radius:999px;background:#22c55e;border:2px solid #bbf7d0;vertical-align:middle}
 
+/* Report modal */
+.report-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:90;display:flex;align-items:flex-start;justify-content:center;padding:10vh 16px}
+.report-modal{background:var(--panel);color:var(--ink);width:min(920px,96vw);max-height:80vh;overflow:auto;border-radius:12px;border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.report-head{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
+.report-body{padding:12px 14px}
+.report-close{background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
+.report-modal .markdown{max-width:80ch}
+
 /* Utility */
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
 .small{color:#6b7280;font-size:13px}

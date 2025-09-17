@@ -166,11 +166,8 @@ export default function ErgSessions() {
                     </>
                   ) : null })()}
                 </summary>
-                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginTop:8 }}>
-                  {(() => { const key = s.date?.toISOString().slice(0,10); const hasReport = key && (reportByDate.has(key) || localReportDates.has(key)); return hasReport ? (<a className="chip" href={`/erg-reports/${key}`}>View report</a>) : null })()}
-                  <div style={{ marginLeft:'auto' }}>
-                    <button className="chip print-btn" onClick={() => handlePrint(s.id)}>Print</button>
-                  </div>
+                <div style={{ display:'flex', justifyContent:'flex-end', alignItems:'center', gap:8, marginTop:8 }}>
+                  <button className="chip print-btn" onClick={() => handlePrint(s.id)}>Print</button>
                 </div>
                 <div className="markdown" style={{ marginTop: 8 }}>
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{s.md}</ReactMarkdown>

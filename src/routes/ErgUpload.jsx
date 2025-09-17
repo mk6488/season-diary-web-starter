@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { auth } from '../firebase'
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import { publishErgSession } from '../data/remote'
 import { CURRENT_SEASON_ID } from '../data/constants'
 
@@ -21,9 +21,11 @@ export default function ErgUpload(){
     return () => unsub()
   }, [])
 
-  const doSignIn = async () => {
-    const provider = new GoogleAuthProvider()
-    await signInWithPopup(auth, provider)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const doSignIn = async (e) => {
+    e.preventDefault()
+    await signInWithEmailAndPassword(auth, email, password)
   }
 
   const doSignOut = async () => { await signOut(auth) }
@@ -55,7 +57,11 @@ export default function ErgUpload(){
         {user ? (
           <div className="small">{user.email} · UID: <code>{user.uid}</code> <button className="chip" onClick={doSignOut}>Sign out</button></div>
         ) : (
-          <button className="chip" onClick={doSignIn}>Sign in with Google</button>
+          <form onSubmit={doSignIn} style={{ display:'flex', gap:6, alignItems:'center', flexWrap:'wrap' }}>
+            <input required placeholder="Coach email" value={email} onChange={(e)=>setEmail(e.target.value)} />
+            <input required type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} />
+            <button className="chip" type="submit">Sign in</button>
+          </form>
         )}
       </header>
 

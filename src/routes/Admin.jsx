@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { auth } from '../firebase'
-import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, signInWithEmailAndPassword } from 'firebase/auth'
+import { onAuthStateChanged, signOut, signInWithEmailAndPassword } from 'firebase/auth'
 import Data from './Data.jsx'
 
 export default function Admin(){
@@ -14,12 +14,6 @@ export default function Admin(){
     return () => unsub()
   }, [])
 
-  const doSignIn = async () => {
-    try{
-      await signInWithPopup(auth, new GoogleAuthProvider())
-      setMsg('')
-    }catch(e){ setMsg(e?.message || 'Sign-in failed') }
-  }
   const doSignOut = async () => { await signOut(auth) }
   const onEmailLogin = async (e) => {
     e.preventDefault()
@@ -36,14 +30,11 @@ export default function Admin(){
         {user ? (
           <div className="small">{user.email} · UID: <code>{user.uid}</code> <button className="chip" onClick={doSignOut}>Sign out</button></div>
         ) : (
-          <div style={{ display:'flex', gap:8, alignItems:'center', flexWrap:'wrap' }}>
-            <button className="chip" onClick={doSignIn}>Sign in with Google</button>
-            <form onSubmit={onEmailLogin} style={{ display:'flex', gap:6, alignItems:'center', flexWrap:'wrap' }}>
-              <input required placeholder="Coach email" value={email} onChange={(e)=>setEmail(e.target.value)} />
-              <input required type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} />
-              <button className="chip" type="submit">Sign in</button>
-            </form>
-          </div>
+          <form onSubmit={onEmailLogin} style={{ display:'flex', gap:6, alignItems:'center', flexWrap:'wrap' }}>
+            <input required placeholder="Coach email" value={email} onChange={(e)=>setEmail(e.target.value)} />
+            <input required type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} />
+            <button className="chip" type="submit">Sign in</button>
+          </form>
         )}
       </header>
 

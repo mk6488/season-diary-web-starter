@@ -5,7 +5,6 @@ import { CURRENT_SEASON_ID } from '../data/constants';
 import './styles.css';
 import { FiltersProvider } from '../data/filters.jsx';
 import { fetchErgReports } from '../data/remote';
-import { CURRENT_SEASON_ID } from '../data/constants';
 import CommandPalette from '../components/CommandPalette.jsx';
 
 // in App.jsx

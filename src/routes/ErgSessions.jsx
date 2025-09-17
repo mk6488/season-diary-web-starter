@@ -11,7 +11,7 @@ const sessionModules = import.meta.glob('../erg-sessions/**/*.md', { query: '?ra
 // Note: file currently exists; dynamic import is safe. If removed later, adjust here.
 let rootErgPromise = null
 try {
-  rootErgPromise = import('../../erg_session.md?raw').then((m) => m.default).catch(() => null)
+  rootErgPromise = import('../../erg_session_2025_09_09.md?raw').then((m) => m.default).catch(() => null)
 } catch (_) {
   rootErgPromise = Promise.resolve(null)
 }

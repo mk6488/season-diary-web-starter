@@ -13,6 +13,7 @@ const ErgSessions = React.lazy(()=>import('./routes/ErgSessions.jsx'))
 const ErgUpload = React.lazy(()=>import('./routes/ErgUpload.jsx'))
 const ErgReport = React.lazy(()=>import('./routes/ErgReport.jsx'))
 const ErgReportUpload = React.lazy(()=>import('./routes/ErgReportUpload.jsx'))
+const MigrateIds = React.lazy(()=>import('./routes/MigrateIds.jsx'))
 
 const router = createBrowserRouter([
   { path: '/', element: <App />,
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: 'erg-sessions/upload', element: <Suspense fallback={<div className="small">Loading…</div>}><ErgUpload /></Suspense> },
       { path: 'erg-reports/:date', element: <Suspense fallback={<div className="small">Loading…</div>}><ErgReport /></Suspense> },
       { path: 'erg-reports/upload', element: <Suspense fallback={<div className="small">Loading…</div>}><ErgReportUpload /></Suspense> },
+      { path: 'admin/migrate-ids', element: <Suspense fallback={<div className="small">Loading…</div>}><MigrateIds /></Suspense> },
       { path: 'plan', element: <Suspense fallback={<div className="small">Loading…</div>}><TopCrews /></Suspense> },
       { path: 'data', element: <Suspense fallback={<div className="small">Loading…</div>}><Data /></Suspense> },
       { path: '*', element: <Suspense fallback={<div className="small">Loading…</div>}><NotFound /></Suspense> },

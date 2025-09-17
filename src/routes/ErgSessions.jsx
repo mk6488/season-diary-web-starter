@@ -1,19 +1,19 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 // Vite glob import: load all .md files placed under /src/erg-sessions/
 // We also try to include the project-root erg_session.md via an explicit import with ?raw
 // Authors: put future files in /src/erg-sessions/YYYY-MM-DD-erg.md (or any name)
 
-// All markdown under src/erg-sessions
-const sessionModules = import.meta.glob('../erg-sessions/**/*.md', { as: 'raw', eager: true })
+// All markdown under src/erg-sessions (Vite v5: use query/import instead of deprecated "as")
+const sessionModules = import.meta.glob('../erg-sessions/**/*.md', { query: '?raw', import: 'default', eager: true })
 
-// Optional: include the root-level example if present at build time
-let rootErg = null
+// Root-level example: load at runtime to avoid top-level await
+// Note: file currently exists; dynamic import is safe. If removed later, adjust here.
+let rootErgPromise = null
 try {
-  // @ts-ignore - vite query import
-  rootErg = await import('../../erg_session.md?raw')
+  rootErgPromise = import('../../erg_session.md?raw').then((m) => m.default).catch(() => null)
 } catch (_) {
-  rootErg = null
+  rootErgPromise = Promise.resolve(null)
 }
 
 function extractDateFromMarkdown(md) {
@@ -36,40 +36,46 @@ function extractDateFromMarkdown(md) {
   return isNaN(parsed.getTime()) ? null : parsed
 }
 
-function useSessions() {
+function useSessions(rootErgMd) {
   const [error, setError] = useState('')
   const sessions = useMemo(() => {
     try {
       const list = []
-      // Add root example first if present
-      if (rootErg && typeof rootErg.default === 'string') {
-        list.push({ id: 'root-erg-session', md: rootErg.default })
+      if (typeof rootErgMd === 'string' && rootErgMd.trim().length > 0) {
+        list.push({ id: 'root-erg-session', md: rootErgMd })
       }
       Object.entries(sessionModules).forEach(([path, md]) => {
         if (/ERG_SESSION_TEMPLATE\.md$/i.test(path)) return
         list.push({ id: path, md })
       })
-      // Map to objects with date
       const withDates = list.map((item) => {
         const date = extractDateFromMarkdown(item.md)
         return { ...item, date }
       })
-      // Filter those we can parse a date for
       const valid = withDates.filter((s) => s.date instanceof Date)
-      // Sort by date desc (latest first)
       valid.sort((a, b) => b.date.getTime() - a.date.getTime())
       return valid
     } catch (e) {
       setError('Failed to load erg sessions')
       return []
     }
-  }, [])
+  }, [rootErgMd])
 
   return { sessions, error }
 }
 
 export default function ErgSessions() {
-  const { sessions, error } = useSessions()
+  const [rootErgMd, setRootErgMd] = useState('')
+
+  useEffect(() => {
+    let active = true
+    if (rootErgPromise && typeof rootErgPromise.then === 'function') {
+      rootErgPromise.then((md) => { if (active && typeof md === 'string') setRootErgMd(md) }).catch(() => {})
+    }
+    return () => { active = false }
+  }, [])
+
+  const { sessions, error } = useSessions(rootErgMd)
 
   return (
     <section className="card">

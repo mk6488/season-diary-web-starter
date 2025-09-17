@@ -131,9 +131,14 @@ tr.pr td{background:linear-gradient(90deg, rgba(16,185,129,.12), transparent)}
 .print-btn{cursor:pointer}
 @media print{
   .sidebar,.topbar,.overlay,.menu-btn,.close-btn{display:none !important}
-  .session-card{break-inside:avoid}
+  /* Hide page header inside the Erg Sessions section */
+  .main > .card > header{display:none !important}
+  /* Only print the selected session */
+  .session-card{break-inside:avoid; display:none !important}
+  .session-card.printing{display:block !important}
   .print-btn, summary{display:none !important}
   .card{border:0;box-shadow:none;margin-bottom:0}
+  .main > .card{padding:0}
   .main{padding:0}
 }
 

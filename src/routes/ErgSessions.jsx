@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 
 // Vite glob import: load all .md files placed under /src/erg-sessions/
 // We also try to include the project-root erg_session.md via an explicit import with ?raw
@@ -6,15 +6,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 // All markdown under src/erg-sessions (Vite v5: use query/import instead of deprecated "as")
 const sessionModules = import.meta.glob('../erg-sessions/**/*.md', { query: '?raw', import: 'default', eager: true })
-
-// Root-level example: load at runtime to avoid top-level await
-// Note: file currently exists; dynamic import is safe. If removed later, adjust here.
-let rootErgPromise = null
-try {
-  rootErgPromise = import('../../erg_session_2025_09_09.md?raw').then((m) => m.default).catch(() => null)
-} catch (_) {
-  rootErgPromise = Promise.resolve(null)
-}
+// Include any root-level files named erg_session_*.md
+const rootSessionModules = import.meta.glob('../../erg_session_*.md', { query: '?raw', import: 'default', eager: true })
 
 function extractDateFromMarkdown(md) {
   // Expect first line like: "# Erg Session – Tuesday, 9th September 2025"
@@ -36,14 +29,15 @@ function extractDateFromMarkdown(md) {
   return isNaN(parsed.getTime()) ? null : parsed
 }
 
-function useSessions(rootErgMd) {
+function useSessions() {
   const [error, setError] = useState('')
   const sessions = useMemo(() => {
     try {
       const list = []
-      if (typeof rootErgMd === 'string' && rootErgMd.trim().length > 0) {
-        list.push({ id: 'root-erg-session', md: rootErgMd })
-      }
+      // Add root-level sessions
+      Object.entries(rootSessionModules).forEach(([path, md]) => {
+        list.push({ id: path, md })
+      })
       Object.entries(sessionModules).forEach(([path, md]) => {
         if (/ERG_SESSION_TEMPLATE\.md$/i.test(path)) return
         list.push({ id: path, md })
@@ -59,23 +53,13 @@ function useSessions(rootErgMd) {
       setError('Failed to load erg sessions')
       return []
     }
-  }, [rootErgMd])
+  }, [])
 
   return { sessions, error }
 }
 
 export default function ErgSessions() {
-  const [rootErgMd, setRootErgMd] = useState('')
-
-  useEffect(() => {
-    let active = true
-    if (rootErgPromise && typeof rootErgPromise.then === 'function') {
-      rootErgPromise.then((md) => { if (active && typeof md === 'string') setRootErgMd(md) }).catch(() => {})
-    }
-    return () => { active = false }
-  }, [])
-
-  const { sessions, error } = useSessions(rootErgMd)
+  const { sessions, error } = useSessions()
 
   return (
     <section className="card">

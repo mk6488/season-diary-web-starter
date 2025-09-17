@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { fetchErgSessions } from '../data/remote'
+import { fetchErgSessions, fetchErgReports } from '../data/remote'
 import { CURRENT_SEASON_ID } from '../data/constants'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -34,12 +34,16 @@ function extractDateFromMarkdown(md) {
 function useSessions() {
   const [error, setError] = useState('')
   const [cloud, setCloud] = useState(null)
+  const [reports, setReports] = useState([])
 
   useEffect(() => {
     let active = true
     fetchErgSessions(CURRENT_SEASON_ID)
       .then((rows) => { if (active) setCloud(Array.isArray(rows) ? rows : []) })
       .catch(() => { if (active) setCloud([]) })
+    fetchErgReports(CURRENT_SEASON_ID)
+      .then((rows) => { if (active) setReports(Array.isArray(rows) ? rows : []) })
+      .catch(() => { if (active) setReports([]) })
     return () => { active = false }
   }, [])
   const sessions = useMemo(() => {
@@ -65,6 +69,14 @@ function useSessions() {
       return []
     }
   }, [cloud])
+
+  const reportByDate = useMemo(() => {
+    const map = new Map()
+    for (const r of reports) {
+      if (r?.date) map.set(String(r.date), r)
+    }
+    return map
+  }, [reports])
 
   return { sessions, error }
 }
@@ -112,8 +124,13 @@ export default function ErgSessions() {
                     </span>
                   )}
                 </summary>
-                <div style={{ display:'flex', justifyContent:'flex-end', marginTop:8 }}>
-                  <button className="chip print-btn" onClick={() => handlePrint(s.id)}>Print</button>
+                <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginTop:8 }}>
+                  {reportByDate.has(s.date?.toISOString().slice(0,10)) && (
+                    <a className="chip" href={`/erg-reports/${s.date.toISOString().slice(0,10)}`}>View report</a>
+                  )}
+                  <div style={{ marginLeft:'auto' }}>
+                    <button className="chip print-btn" onClick={() => handlePrint(s.id)}>Print</button>
+                  </div>
                 </div>
                 <div className="markdown" style={{ marginTop: 8 }}>
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{s.md}</ReactMarkdown>

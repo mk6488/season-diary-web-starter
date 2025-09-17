@@ -20,6 +20,12 @@ service cloud.firestore {
         allow read: if true;
         allow write: if isCoach();
       }
+
+      // Erg reports subcollection
+      match /ergReports/{reportId} {
+        allow read: if true;
+        allow write: if isCoach();
+      }
     }
 
     function isCoach() {

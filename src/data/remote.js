@@ -309,6 +309,49 @@ export async function publishErgSession(seasonId, session, publisher){
     await addDoc(ergCol, payload);
   }
 }
+
+// --- Erg session reports ---
+
+export async function fetchErgReports(seasonId = '2025'){
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+  const repCol = collection(seasonRef, 'ergReports');
+  const q = query(repCol, orderBy('date', 'desc'));
+  const snap = await getDocs(q);
+  const rows = [];
+  snap.forEach((d) => rows.push({ id: d.id, ...d.data() }));
+  return rows;
+}
+
+export async function fetchErgReportByDate(seasonId, dateStr){
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+  const repCol = collection(seasonRef, 'ergReports');
+  const q = query(repCol, where('date', '==', dateStr));
+  const snap = await getDocs(q);
+  if (snap.empty) return null;
+  const d = snap.docs[0];
+  return { id: d.id, ...d.data() };
+}
+
+export async function publishErgReport(seasonId, report, publisher){
+  if (!report || !report.markdown) throw new Error('report.markdown is required');
+  if (!report.date) throw new Error('report.date is required');
+  const seasonRef = doc(db, 'seasonDiary', seasonId);
+  const repCol = collection(seasonRef, 'ergReports');
+  const payload = {
+    title: report.title || '',
+    markdown: report.markdown,
+    date: report.date, // YYYY-MM-DD
+    updatedAt: serverTimestamp(),
+    createdAt: serverTimestamp(),
+    updatedByUid: publisher?.uid ?? null,
+    updatedByEmail: publisher?.email ?? null,
+  };
+  if (report.id) {
+    await setDoc(doc(repCol, report.id), payload, { merge: true });
+  } else {
+    await addDoc(repCol, payload);
+  }
+}
 // Add or update a single test for an athlete (idempotent)
 export async function publishTest(seasonId, athlete, test, publisher){
   const seasonRef = doc(db, 'seasonDiary', seasonId);

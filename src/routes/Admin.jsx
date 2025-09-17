@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { auth } from '../firebase'
 import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
+import Data from './Data.jsx'
 
 export default function Admin(){
   const [user, setUser] = useState(null)
@@ -38,11 +39,10 @@ export default function Admin(){
             <p className="small">Upload session reports; auto-links by date.</p>
             <Link className="chip" to="/erg-reports/upload">Open uploader</Link>
           </div>
-          <div className="card" style={{ margin:0 }}>
-            <h3 style={{ marginTop:0 }}>Data Manager</h3>
-            <p className="small">Download current JSON, upload and publish season data.</p>
-            <Link className="chip" to="/data">Open data tools</Link>
-          </div>
+        </div>
+
+        <div style={{ marginTop:12 }}>
+          <Data />
         </div>
       )}
     </section>

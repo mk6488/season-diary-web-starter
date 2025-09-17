@@ -53,7 +53,7 @@ export default function ErgUpload(){
       <header style={{ display:'flex', alignItems:'center', justifyContent:'space-between' }}>
         <h2 style={{ margin:0 }}>Upload Erg Session</h2>
         {user ? (
-          <div className="small">{user.email} <button className="chip" onClick={doSignOut}>Sign out</button></div>
+          <div className="small">{user.email} · UID: <code>{user.uid}</code> <button className="chip" onClick={doSignOut}>Sign out</button></div>
         ) : (
           <button className="chip" onClick={doSignIn}>Sign in with Google</button>
         )}

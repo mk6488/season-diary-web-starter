@@ -28,7 +28,12 @@ service cloud.firestore {
         request.auth.uid in [
           // Coach UID(s)
           "sLGBzcsx35fQtcxp0R75Zvnmefm1"
-        ] || (request.auth.token.coach == true)
+        ]
+        || (request.auth.token.email in [
+          // Coach email(s) - add yours here, then publish rules
+          "you@example.com"
+        ])
+        || (request.auth.token.coach == true)
       );
     }
   }

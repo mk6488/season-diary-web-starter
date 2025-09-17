@@ -80,7 +80,7 @@ function useSessions() {
 
   // Local example reports (for pre-Firestore testing)
   const localReportDates = useMemo(() => {
-    const modules = import.meta.glob('../../content/erg-sessions/erg_session_reports_*.md', { eager: true })
+    const modules = import.meta.glob('../../content/erg-sessions/erg_session_reports_*.md', { query: '?raw', import: 'default', eager: true })
     const set = new Set()
     Object.keys(modules).forEach((path) => {
       const m = path.match(/erg_session_reports_(\d{4})_(\d{2})_(\d{2})\.md$/)

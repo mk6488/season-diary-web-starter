@@ -6,7 +6,7 @@ const Dashboard = React.lazy(()=>import('./routes/Dashboard.jsx'))
 const Athlete = React.lazy(()=>import('./routes/Athlete.jsx'))
 const Tests = React.lazy(()=>import('./routes/Tests.jsx'))
 const Themes = React.lazy(()=>import('./routes/Themes.jsx'))
-const TopCrews = React.lazy(()=>import('./routes/TopCrews.jsx'))
+// const TopCrews = React.lazy(()=>import('./routes/TopCrews.jsx'))
 const Data = React.lazy(()=>import('./routes/Data.jsx'))
 const NotFound = React.lazy(()=>import('./routes/NotFound.jsx'))
 const ErgSessions = React.lazy(()=>import('./routes/ErgSessions.jsx'))
@@ -25,7 +25,7 @@ const router = createBrowserRouter([
       { path: 'erg-sessions/upload', element: <Suspense fallback={<div className="small">Loading…</div>}><ErgUpload /></Suspense> },
       { path: 'erg-reports/:date', element: <Suspense fallback={<div className="small">Loading…</div>}><ErgReport /></Suspense> },
       { path: 'erg-reports/upload', element: <Suspense fallback={<div className="small">Loading…</div>}><ErgReportUpload /></Suspense> },
-      { path: 'plan', element: <Suspense fallback={<div className="small">Loading…</div>}><TopCrews /></Suspense> },
+      // { path: 'plan', element: <Suspense fallback={<div className="small">Loading…</div>}><TopCrews /></Suspense> },
       { path: 'data', element: <Suspense fallback={<div className="small">Loading…</div>}><Data /></Suspense> },
       { path: '*', element: <Suspense fallback={<div className="small">Loading…</div>}><NotFound /></Suspense> },
     ]

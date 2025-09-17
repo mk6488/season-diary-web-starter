@@ -87,17 +87,19 @@ export default function ErgSessions() {
         <div className="grid" style={{ gridTemplateColumns: '1fr', gap: 16 }}>
           {sessions.map((s) => (
             <article key={s.id} className="card" style={{ padding: 12 }}>
-              <header style={{ display:'flex', alignItems:'baseline', gap:8, flexWrap:'wrap' }}>
-                <h3 style={{ margin:0 }}>{s.title || s.md.split(/\r?\n/)[0].replace(/^#\s*/, '')}</h3>
-                {s.date && (
-                  <span className="small">
-                    {s.date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
-                  </span>
-                )}
-              </header>
-              <div className="markdown" style={{ marginTop: 8 }}>
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{s.md}</ReactMarkdown>
-              </div>
+              <details>
+                <summary style={{ cursor:'pointer' }}>
+                  <strong>{s.title || s.md.split(/\r?\n/)[0].replace(/^#\s*/, '')}</strong>
+                  {s.date && (
+                    <span className="small" style={{ marginLeft:8 }}>
+                      {s.date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
+                    </span>
+                  )}
+                </summary>
+                <div className="markdown" style={{ marginTop: 8 }}>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{s.md}</ReactMarkdown>
+                </div>
+              </details>
             </article>
           ))}
         </div>

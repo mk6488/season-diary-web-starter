@@ -15,6 +15,15 @@ Then open the printed URL (usually http://localhost:5173).
 ## Add a new athlete
 Edit `src/data/sample.json`, add a new athlete object and tests.
 
+## Erg sessions content (local backup)
+
+Optional local markdown lives under `content/erg-sessions/`:
+
+- `content/erg-sessions/ERG_SESSION_TEMPLATE.md` – copy for new sessions
+- `content/erg-sessions/erg_session_YYYY_MM_DD.md` – dated sessions
+
+The app currently reads from Firestore only, but these files are kept for backup and future import.
+
 ## Firestore data model
 
 - Collection `seasonDiary/{season}`

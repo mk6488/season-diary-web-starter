@@ -1,37 +1,27 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { fetchErgReportByDate } from '../data/remote'
+import { CURRENT_SEASON_ID } from '../data/constants'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 
 export default function ErgReport(){
   const { date } = useParams()
   const [error, setError] = useState('')
-
-  // Local example reports bundled at build time
-  const localReports = useMemo(() => {
-    const modules = import.meta.glob('../../content/erg-sessions/erg_session_reports_*.md', { query: '?raw', import: 'default', eager: true })
-    const map = new Map()
-    Object.entries(modules).forEach(([path, md]) => {
-      const m = path.match(/erg_session_reports_(\d{4})_(\d{2})_(\d{2})\.md$/)
-      if (m) {
-        const key = `${m[1]}-${m[2]}-${m[3]}` // YYYY-MM-DD
-        map.set(key, String(md))
-      }
-    })
-    return map
-  }, [])
-
-  const markdown = localReports.get(date)
+  const [report, setReport] = useState(null)
 
   useEffect(() => {
-    if (!markdown) setError('Report not found')
-    else setError('')
-  }, [markdown])
+    let active = true
+    fetchErgReportByDate(CURRENT_SEASON_ID, date)
+      .then((r) => { if (active) setReport(r) })
+      .catch(() => { if (active) setError('Report not found') })
+    return () => { active = false }
+  }, [date])
 
   if (error) return <section className="card"><p className="small">{error}</p></section>
-  if (!markdown) return <section className="card"><p className="small">Loading…</p></section>
+  if (!report) return <section className="card"><p className="small">Loading…</p></section>
 
-  const title = String(markdown || '').split(/\r?\n/)[0].replace(/^#\s*/, '')
+  const title = (report.title || String(report.markdown || '').split(/\r?\n/)[0]).replace(/^#\s*/, '')
 
   return (
     <section className="card">
@@ -40,7 +30,7 @@ export default function ErgReport(){
         <span className="small">{date}</span>
       </header>
       <div className="markdown" style={{ marginTop: 8 }}>
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>{String(markdown || '')}</ReactMarkdown>
+        <ReactMarkdown remarkPlugins={[remarkGfm]}>{String(report.markdown || '')}</ReactMarkdown>
       </div>
     </section>
   )

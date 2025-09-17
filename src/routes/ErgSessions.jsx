@@ -78,21 +78,9 @@ function useSessions() {
     return map
   }, [reports])
 
-  // Local example reports (for pre-Firestore testing)
-  const { localReportsMap, localReportDates } = useMemo(() => {
-    const modules = import.meta.glob('../../content/erg-sessions/erg_session_reports_*.md', { query: '?raw', import: 'default', eager: true })
-    const map = new Map()
-    const set = new Set()
-    Object.entries(modules).forEach(([path, md]) => {
-      const m = path.match(/erg_session_reports_(\d{4})_(\d{2})_(\d{2})\.md$/)
-      if (m){
-        const key = `${m[1]}-${m[2]}-${m[3]}`
-        set.add(key)
-        map.set(key, String(md))
-      }
-    })
-    return { localReportsMap: map, localReportDates: set }
-  }, [])
+  // Local example reports disabled (Firestore only)
+  const localReportDates = useMemo(() => new Set(), [])
+  const localReportsMap = useMemo(() => new Map(), [])
 
   return { sessions, error, reportByDate, localReportDates, localReportsMap }
 }

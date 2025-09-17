@@ -144,11 +144,12 @@ export default function ErgSessions() {
       {sessions.length === 0 ? (
         <p className="small">No erg sessions found yet. Add .md files under <code>src/erg-sessions/</code>.</p>
       ) : (
-        <div className="grid" style={{ gridTemplateColumns: '1fr', gap: 16 }}>
+        <div className="grid" style={{ gridTemplateColumns: '1fr', gap: 16, marginTop: 8 }}>
           {sessions.map((s) => (
             <article key={s.id} className={"card session-card" + (printingId === s.id ? ' printing' : '')} style={{ padding: 12 }}>
               <details ref={(el) => { if (el) detailRefs.current[s.id] = el }}>
                 <summary style={{ cursor:'pointer', display:'flex', alignItems:'baseline', gap:8, flexWrap:'wrap' }}>
+                  <span className="expand-caret" aria-hidden="true">▾</span>
                   <strong>{s.title || s.md.split(/\r?\n/)[0].replace(/^#\s*/, '')}</strong>
                   {s.date && (
                     <span className="small" style={{ marginLeft:8 }}>

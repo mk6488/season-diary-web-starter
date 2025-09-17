@@ -90,6 +90,10 @@ tr.pr td{background:linear-gradient(90deg, rgba(16,185,129,.12), transparent)}
 .report-close{background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;cursor:pointer}
 .report-modal .markdown{max-width:80ch}
 
+/* Expand caret for details summary */
+summary .expand-caret{transition:transform .15s ease}
+details[open] summary .expand-caret{transform:rotate(-180deg)}
+
 /* Utility */
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
 .small{color:#6b7280;font-size:13px}

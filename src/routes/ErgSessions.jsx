@@ -123,6 +123,9 @@ export default function ErgSessions() {
                       {s.date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
                     </span>
                   )}
+                  {reportByDate.has(s.date?.toISOString().slice(0,10)) && (
+                    <span className="tag report" style={{ marginLeft:8 }}>Report uploaded</span>
+                  )}
                 </summary>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginTop:8 }}>
                   {reportByDate.has(s.date?.toISOString().slice(0,10)) && (

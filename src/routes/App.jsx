@@ -142,6 +142,7 @@ export default function App() {
             <NavLink to="/" end>Dashboard</NavLink>
             <NavLink to="/tests">Testing Log</NavLink>
             <NavLink to="/themes">Focus & Themes</NavLink>
+            <NavLink to="/erg-sessions">Erg Sessions</NavLink>
             <NavLink to="/plan">Top Crews</NavLink>
             <NavLink to="/data">Data</NavLink>
           </nav>

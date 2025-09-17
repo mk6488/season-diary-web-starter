@@ -41,7 +41,9 @@ export default function Admin(){
           </div>
         </div>
 
-        <div style={{ marginTop:12 }}>
+      )}
+      {user && (
+        <div style={{ marginTop: '12px' }}>
           <Data />
         </div>
       )}

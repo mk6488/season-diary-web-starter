@@ -131,6 +131,9 @@ export default function ErgSessions() {
                   {reportByDate.has(s.date?.toISOString().slice(0,10)) && (
                     <a className="chip" href={`/erg-reports/${s.date.toISOString().slice(0,10)}`}>View report</a>
                   )}
+                  {!reportByDate.has(s.date?.toISOString().slice(0,10)) && (
+                    <a className="chip" href={`/erg-reports/${s.date.toISOString().slice(0,10)}`}>View report (example)</a>
+                  )}
                   <div style={{ marginLeft:'auto' }}>
                     <button className="chip print-btn" onClick={() => handlePrint(s.id)}>Print</button>
                   </div>

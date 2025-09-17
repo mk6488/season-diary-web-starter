@@ -7,9 +7,7 @@ import { CURRENT_SEASON_ID } from '../data/constants'
 // Authors: put future files in /src/erg-sessions/YYYY-MM-DD-erg.md (or any name)
 
 // All markdown under src/erg-sessions (Vite v5: use query/import instead of deprecated "as")
-const sessionModules = import.meta.glob('../erg-sessions/**/*.md', { query: '?raw', import: 'default', eager: true })
-// Include any root-level files named erg_session_*.md
-const rootSessionModules = import.meta.glob('../../erg_session_*.md', { query: '?raw', import: 'default', eager: true })
+// Local hardcoded markdown fallback is disabled for testing Firestore uploads
 
 function extractDateFromMarkdown(md) {
   // Expect first line like: "# Erg Session – Tuesday, 9th September 2025"
@@ -44,7 +42,7 @@ function useSessions() {
   }, [])
   const sessions = useMemo(() => {
     try {
-      // Prefer cloud if available
+      // Cloud-only mode
       if (Array.isArray(cloud) && cloud.length) {
         const mapped = cloud.map((c) => {
           const date = typeof c.date === 'string' ? new Date(c.date) : (c.date?.toDate ? c.date.toDate() : null)
@@ -59,23 +57,7 @@ function useSessions() {
         valid.sort((a, b) => b.date.getTime() - a.date.getTime())
         return valid
       }
-
-      const list = []
-      // Add root-level sessions
-      Object.entries(rootSessionModules).forEach(([path, md]) => {
-        list.push({ id: path, md })
-      })
-      Object.entries(sessionModules).forEach(([path, md]) => {
-        if (/ERG_SESSION_TEMPLATE\.md$/i.test(path)) return
-        list.push({ id: path, md })
-      })
-      const withDates = list.map((item) => {
-        const date = extractDateFromMarkdown(item.md)
-        return { ...item, date }
-      })
-      const valid = withDates.filter((s) => s.date instanceof Date)
-      valid.sort((a, b) => b.date.getTime() - a.date.getTime())
-      return valid
+      return []
     } catch (e) {
       setError('Failed to load erg sessions')
       return []

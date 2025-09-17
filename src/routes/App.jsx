@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import { ensureRemote } from '../data/useData';
 import { CURRENT_SEASON_ID } from '../data/constants';
 import './styles.css';
@@ -23,6 +25,7 @@ export default function App() {
   const [dataReady, setDataReady] = useState(false);
   const location = useLocation();
   const [reportCount, setReportCount] = useState(0);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
   // Fetch central data once; when done, trigger a re-render so views read fresh data
   useEffect(() => {
@@ -43,6 +46,12 @@ export default function App() {
       }catch{ if (active) setReportCount(0); }
     })();
     return () => { active = false; };
+  }, []);
+
+  // Track sign-in for admin link
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u)=> setIsSignedIn(!!u));
+    return () => unsub();
   }, []);
 
   // Close drawer when route changes
@@ -163,6 +172,7 @@ export default function App() {
             <NavLink to="/themes">Focus & Themes</NavLink>
             <NavLink to="/erg-sessions">Erg Sessions {reportCount>0 && (<span className="badge" aria-label={`${reportCount} reports available`} title={`${reportCount} reports available`}>{reportCount}</span>)}</NavLink>
             <NavLink to="/data">Data</NavLink>
+            {isSignedIn && <NavLink to="/admin">Admin</NavLink>}
           </nav>
 
           <p className="small footnote">{syncLabel}</p>

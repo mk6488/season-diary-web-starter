@@ -20,12 +20,17 @@ export default function App() {
   const [open, setOpen] = useState(false);
   const [syncInfo, setSyncInfo] = useState(readSyncInfo());
   const [toast, setToast] = useState('');
+  const [dataReady, setDataReady] = useState(false);
   const location = useLocation();
   const [reportCount, setReportCount] = useState(0);
 
   // Fetch central data once; when done, trigger a re-render so views read fresh data
   useEffect(() => {
-    (async () => { await ensureRemote(CURRENT_SEASON_ID); setSyncInfo(readSyncInfo()); })();
+    (async () => {
+      await ensureRemote(CURRENT_SEASON_ID);
+      setSyncInfo(readSyncInfo());
+      setDataReady(true);
+    })();
   }, []);
 
   // Load report count to show nav indicator
@@ -175,7 +180,7 @@ export default function App() {
         )}
         <FiltersProvider>
           <CommandPalette />
-          <Outlet />
+          {dataReady ? <Outlet /> : <div className="small">Loading…</div>}
         </FiltersProvider>
       </main>
     </div>

@@ -105,8 +105,8 @@ export default function ErgSessions() {
       <header style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12 }}>
         <h2 style={{ margin: 0 }}>Erg Sessions</h2>
         <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-          {reports?.length>0 && (
-            <span className="tag report" title="Reports available">{reports.length} report{reports.length>1?'s':''}</span>
+          {reportByDate.size>0 && (
+            <span className="tag report" title="Reports available">{reportByDate.size} report{reportByDate.size>1?'s':''}</span>
           )}
           <p className="small" style={{ margin:0 }}>Latest first</p>
         </div>

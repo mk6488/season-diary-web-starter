@@ -78,6 +78,17 @@ function useSessions() {
     return map
   }, [reports])
 
+  // Local example reports (for pre-Firestore testing)
+  const localReportDates = useMemo(() => {
+    const modules = import.meta.glob('../../content/erg-sessions/erg_session_reports_*.md', { eager: true })
+    const set = new Set()
+    Object.keys(modules).forEach((path) => {
+      const m = path.match(/erg_session_reports_(\d{4})_(\d{2})_(\d{2})\.md$/)
+      if (m) set.add(`${m[1]}-${m[2]}-${m[3]}`)
+    })
+    return set
+  }, [])
+
   return { sessions, error, reportByDate }
 }
 
@@ -121,24 +132,17 @@ export default function ErgSessions() {
           {sessions.map((s) => (
             <article key={s.id} className={"card session-card" + (printingId === s.id ? ' printing' : '')} style={{ padding: 12 }}>
               <details ref={(el) => { if (el) detailRefs.current[s.id] = el }}>
-                <summary style={{ cursor:'pointer' }}>
+                <summary style={{ cursor:'pointer', display:'flex', alignItems:'baseline', gap:8, flexWrap:'wrap' }}>
                   <strong>{s.title || s.md.split(/\r?\n/)[0].replace(/^#\s*/, '')}</strong>
                   {s.date && (
                     <span className="small" style={{ marginLeft:8 }}>
                       {s.date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
                     </span>
                   )}
-                  {reportByDate.has(s.date?.toISOString().slice(0,10)) && (
-                    <span className="tag report" style={{ marginLeft:8 }}>Report uploaded</span>
-                  )}
+                  {(() => { const key = s.date?.toISOString().slice(0,10); const hasReport = key && (reportByDate.has(key) || localReportDates.has(key)); return hasReport ? (<span className="report-dot" title="Report available" aria-label="Report available" />) : null })()}
                 </summary>
                 <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', gap:8, marginTop:8 }}>
-                  {reportByDate.has(s.date?.toISOString().slice(0,10)) && (
-                    <a className="chip" href={`/erg-reports/${s.date.toISOString().slice(0,10)}`}>View report</a>
-                  )}
-                  {!reportByDate.has(s.date?.toISOString().slice(0,10)) && (
-                    <a className="chip" href={`/erg-reports/${s.date.toISOString().slice(0,10)}`}>View report (example)</a>
-                  )}
+                  {(() => { const key = s.date?.toISOString().slice(0,10); const hasReport = key && (reportByDate.has(key) || localReportDates.has(key)); return hasReport ? (<a className="chip" href={`/erg-reports/${key}`}>View report</a>) : null })()}
                   <div style={{ marginLeft:'auto' }}>
                     <button className="chip print-btn" onClick={() => handlePrint(s.id)}>Print</button>
                   </div>

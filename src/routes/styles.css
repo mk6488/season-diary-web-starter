@@ -79,6 +79,9 @@ tr.pr td{background:linear-gradient(90deg, rgba(16,185,129,.12), transparent)}
 .tag.power{background:#ffe6ea;border-color:#f8a1b6}
 .tag.report{background:#ecfeff;border-color:#7dd3fc}
 
+/* Small report presence indicator on collapsed items */
+.report-dot{display:inline-block;width:10px;height:10px;border-radius:999px;background:#22c55e;border:2px solid #bbf7d0;vertical-align:middle}
+
 /* Utility */
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
 .small{color:#6b7280;font-size:13px}

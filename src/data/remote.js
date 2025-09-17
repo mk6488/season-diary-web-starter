@@ -346,11 +346,27 @@ export async function publishErgReport(seasonId, report, publisher){
     updatedByUid: publisher?.uid ?? null,
     updatedByEmail: publisher?.email ?? null,
   };
+  let newReportId = report.id;
   if (report.id) {
     await setDoc(doc(repCol, report.id), payload, { merge: true });
   } else {
-    await addDoc(repCol, payload);
+    const added = await addDoc(repCol, payload);
+    newReportId = added.id;
   }
+
+  // Link matching ergSessions by date with reportId for stronger association
+  try{
+    const ergCol = collection(seasonRef, 'ergSessions');
+    const qSessions = query(ergCol, where('date', '==', report.date));
+    const snap = await getDocs(qSessions);
+    if (!snap.empty && newReportId){
+      const batch = writeBatch(db);
+      snap.docs.forEach((d)=>{
+        batch.set(d.ref, { reportId: newReportId, updatedAt: serverTimestamp() }, { merge: true });
+      });
+      await batch.commit();
+    }
+  }catch(_){ /* non-fatal */ }
 }
 // Add or update a single test for an athlete (idempotent)
 export async function publishTest(seasonId, athlete, test, publisher){

@@ -13,6 +13,7 @@ export default function ErgReportUpload(){
   const [user, setUser] = useState(null)
   const [date, setDate] = useState('')
   const [markdown, setMarkdown] = useState('')
+  const [linkSession, setLinkSession] = useState(true)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -59,6 +60,11 @@ export default function ErgReportUpload(){
         <label className="small">
           Date (YYYY-MM-DD)
           <input type="text" placeholder="2025-09-16" value={date} onChange={(e)=>setDate(e.target.value)} style={{ width:'220px', display:'block', marginTop:6 }} />
+        </label>
+
+        <label className="small" style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <input type="checkbox" checked={linkSession} onChange={(e)=>setLinkSession(e.target.checked)} />
+          Link to matching erg session by date
         </label>
 
         <label className="small">

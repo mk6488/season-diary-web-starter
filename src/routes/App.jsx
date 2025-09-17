@@ -4,6 +4,8 @@ import { ensureRemote } from '../data/useData';
 import { CURRENT_SEASON_ID } from '../data/constants';
 import './styles.css';
 import { FiltersProvider } from '../data/filters.jsx';
+import { fetchErgReports } from '../data/remote';
+import { CURRENT_SEASON_ID } from '../data/constants';
 import CommandPalette from '../components/CommandPalette.jsx';
 
 // in App.jsx
@@ -20,10 +22,23 @@ export default function App() {
   const [syncInfo, setSyncInfo] = useState(readSyncInfo());
   const [toast, setToast] = useState('');
   const location = useLocation();
+  const [reportCount, setReportCount] = useState(0);
 
   // Fetch central data once; when done, trigger a re-render so views read fresh data
   useEffect(() => {
     (async () => { await ensureRemote(CURRENT_SEASON_ID); setSyncInfo(readSyncInfo()); })();
+  }, []);
+
+  // Load report count to show nav indicator
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try{
+        const rows = await fetchErgReports(CURRENT_SEASON_ID);
+        if (active) setReportCount(Array.isArray(rows) ? rows.length : 0);
+      }catch{ if (active) setReportCount(0); }
+    })();
+    return () => { active = false; };
   }, []);
 
   // Close drawer when route changes
@@ -142,7 +157,7 @@ export default function App() {
             <NavLink to="/" end>Dashboard</NavLink>
             <NavLink to="/tests">Testing Log</NavLink>
             <NavLink to="/themes">Focus & Themes</NavLink>
-            <NavLink to="/erg-sessions">Erg Sessions</NavLink>
+            <NavLink to="/erg-sessions">Erg Sessions {reportCount>0 && (<span className="badge" aria-label={`${reportCount} reports available`} title={`${reportCount} reports available`}>{reportCount}</span>)}</NavLink>
             <NavLink to="/plan">Top Crews</NavLink>
             <NavLink to="/data">Data</NavLink>
           </nav>

@@ -14,6 +14,12 @@ service cloud.firestore {
         allow read: if true;
         allow write: if isCoach();
       }
+
+      // Erg sessions subcollection
+      match /ergSessions/{sessionId} {
+        allow read: if true;
+        allow write: if isCoach();
+      }
     }
 
     function isCoach() {

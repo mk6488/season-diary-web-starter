@@ -42,7 +42,7 @@ export default function ErgUpload(){
       setMsg('Uploaded ✓')
       setMarkdown('')
     }catch(err){
-      setMsg('Upload failed')
+      setMsg('Upload failed: ' + (err?.message || 'Unknown error'))
     }finally{
       setBusy(false)
     }

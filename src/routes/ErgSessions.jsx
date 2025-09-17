@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { fetchErgSessions } from '../data/remote'
 import { CURRENT_SEASON_ID } from '../data/constants'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 // Vite glob import: load all .md files placed under /src/erg-sessions/
 // We also try to include the project-root erg_session.md via an explicit import with ?raw
@@ -85,19 +87,17 @@ export default function ErgSessions() {
         <div className="grid" style={{ gridTemplateColumns: '1fr', gap: 16 }}>
           {sessions.map((s) => (
             <article key={s.id} className="card" style={{ padding: 12 }}>
-              <details>
-                <summary style={{ cursor: 'pointer' }}>
-                  <strong>
-                    {s.md.split(/\r?\n/)[0].replace(/^#\s*/, '')}
-                  </strong>
-                  {s.date && (
-                    <span className="small" style={{ marginLeft: 8 }}>
-                      {s.date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
-                    </span>
-                  )}
-                </summary>
-                <pre className="mono" style={{ whiteSpace: 'pre-wrap', marginTop: 10 }}>{s.md}</pre>
-              </details>
+              <header style={{ display:'flex', alignItems:'baseline', gap:8, flexWrap:'wrap' }}>
+                <h3 style={{ margin:0 }}>{s.title || s.md.split(/\r?\n/)[0].replace(/^#\s*/, '')}</h3>
+                {s.date && (
+                  <span className="small">
+                    {s.date.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' })}
+                  </span>
+                )}
+              </header>
+              <div className="markdown" style={{ marginTop: 8 }}>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{s.md}</ReactMarkdown>
+              </div>
             </article>
           ))}
         </div>

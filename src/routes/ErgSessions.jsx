@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { fetchErgSessions } from '../data/remote'
 import { CURRENT_SEASON_ID } from '../data/constants'
 import ReactMarkdown from 'react-markdown'
@@ -71,6 +71,22 @@ function useSessions() {
 
 export default function ErgSessions() {
   const { sessions, error } = useSessions()
+  const [printingId, setPrintingId] = useState(null)
+  const detailRefs = useRef({})
+
+  const handlePrint = (id) => {
+    const detailsEl = detailRefs.current[id]
+    const wasOpen = detailsEl ? detailsEl.open : false
+    if (detailsEl) detailsEl.open = true
+    setPrintingId(id)
+    const onAfter = () => {
+      setPrintingId(null)
+      if (detailsEl) detailsEl.open = wasOpen
+      window.removeEventListener('afterprint', onAfter)
+    }
+    window.addEventListener('afterprint', onAfter)
+    setTimeout(() => window.print(), 50)
+  }
 
   return (
     <section className="card">
@@ -86,8 +102,8 @@ export default function ErgSessions() {
       ) : (
         <div className="grid" style={{ gridTemplateColumns: '1fr', gap: 16 }}>
           {sessions.map((s) => (
-            <article key={s.id} className="card" style={{ padding: 12 }}>
-              <details>
+            <article key={s.id} className={"card session-card" + (printingId === s.id ? ' printing' : '')} style={{ padding: 12 }}>
+              <details ref={(el) => { if (el) detailRefs.current[s.id] = el }}>
                 <summary style={{ cursor:'pointer' }}>
                   <strong>{s.title || s.md.split(/\r?\n/)[0].replace(/^#\s*/, '')}</strong>
                   {s.date && (
@@ -96,6 +112,9 @@ export default function ErgSessions() {
                     </span>
                   )}
                 </summary>
+                <div style={{ display:'flex', justifyContent:'flex-end', marginTop:8 }}>
+                  <button className="chip print-btn" onClick={() => handlePrint(s.id)}>Print</button>
+                </div>
                 <div className="markdown" style={{ marginTop: 8 }}>
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>{s.md}</ReactMarkdown>
                 </div>

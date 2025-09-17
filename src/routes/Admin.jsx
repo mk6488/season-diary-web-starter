@@ -56,8 +56,12 @@ export default function Admin(){
 
       )}
       {user && (
-        <div style={{ marginTop: '12px' }}>
-          <Data />
+        <div className="card" style={{ marginTop:'12px', padding:12 }}>
+          <h3 style={{ marginTop:0 }}>Data Manager</h3>
+          <p className="small">Download current JSON, upload and publish season data.</p>
+          <div className="small" style={{ marginTop:8 }}>
+            <Data />
+          </div>
         </div>
       )}
       {msg && <p className="small" style={{ color:'#b91c1c', marginTop:'8px' }}>{msg}</p>}

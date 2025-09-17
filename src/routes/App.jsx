@@ -171,7 +171,7 @@ export default function App() {
             <NavLink to="/tests">Testing Log</NavLink>
             <NavLink to="/themes">Focus & Themes</NavLink>
             <NavLink to="/erg-sessions">Erg Sessions {reportCount>0 && (<span className="badge" aria-label={`${reportCount} reports available`} title={`${reportCount} reports available`}>{reportCount}</span>)}</NavLink>
-            {isSignedIn && <NavLink to="/admin">Admin</NavLink>}
+            <NavLink to="/admin">Admin <span aria-hidden="true">🔒</span></NavLink>
           </nav>
 
           <p className="small footnote">{syncLabel}</p>

@@ -25,8 +25,8 @@ This guide shows what to look for when comparing different erg tests (J14–J15 
 
 ---
 
-#### **1k@24 vs 30r20**  (Efficiency under load)
-- **Normal gap:** Within 2–3 sec. ✅ *(Green – Healthy)*
+#### **5k vs 30r20**  (Efficiency under load)
+- **Normal gap:** Within 1–3 sec. ✅ *(Green – Healthy)*
 - **Much slower 30r20:** Can’t sustain efficient stroke → aerobic depth issue. 🔴 *(Red – Aerobic weakness)*
 - **Identical splits:** Excellent efficiency, strong aerobic base. 🔵 *(Blue – Endurance solid)*
 
@@ -44,10 +44,9 @@ This guide shows what to look for when comparing different erg tests (J14–J15 
 - 250m split ≈ 12–18s faster than 1k@24. ✅
 - 1k@24 split ≈ 3–7s faster than 2k. ✅
 - 2k split ≈ 6–10s faster than 5k. ✅
-- 30r20 within 2–3s of 1k@24. ✅
+- 30r20 within 1–3s of 5k. ✅
 
 **Too tight gaps:** Underpowered, lacks top gear. 🔵  
 **Too wide gaps:** Inefficiency or aerobic weakness. 🔴  
 
 **Use:** Keep this colour-coded sheet with erg results to spot red flags quickly and decide training focus (sprint, endurance, or efficiency).
-

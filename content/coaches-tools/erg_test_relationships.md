@@ -4,15 +4,6 @@ This guide shows what to look for when comparing different erg tests (J14–J15 
 
 ---
 
-#### **Visual Flow of Tests**
-```
- [7-stroke max] → [250m sprint] → [1k@24] → [2k] → [5k] → [30r20]
-       Peak Power        Sprint Power      Efficiency   Race Pace   Aerobic Base   Sustained Efficiency
-```
-*Follow the chain: each test builds on the last, showing how power, efficiency, and endurance interact.*
-
----
-
 #### **250m vs 1k@24**  (Power vs Efficiency)
 - **Normal gap:** 12–18 sec faster on 250m. ✅ *(Green – Healthy)*
 - **<10 sec gap:** Endurance-leaning, may lack top-end speed. 🔵 *(Blue – Endurance tilt)*
@@ -59,4 +50,3 @@ This guide shows what to look for when comparing different erg tests (J14–J15 
 **Too wide gaps:** Inefficiency or aerobic weakness. 🔴  
 
 **Use:** Keep this colour-coded sheet with erg results to spot red flags quickly and decide training focus (sprint, endurance, or efficiency).
-

@@ -10,11 +10,18 @@ export default function CoachesTools(){
         <h2 style={{ marginTop:0 }}>Coaches Tools</h2>
         <p className="small" style={{ marginTop:4 }}>Quick references and utilities for coaches.</p>
       </header>
-      <div className="card" style={{ marginTop:12 }}>
-        <h3 style={{ marginTop:0 }}>Inter Boys Erg Test Relationships</h3>
-        <div className="prose">
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{mdContent}</ReactMarkdown>
-        </div>
+      <div className="grid" style={{ gridTemplateColumns:'1fr', gap:16, marginTop:12 }}>
+        <article className="card" style={{ padding:12 }}>
+          <details open>
+            <summary style={{ cursor:'pointer', display:'flex', alignItems:'baseline', gap:8 }}>
+              <span className="expand-caret" aria-hidden="true">▾</span>
+              <strong>Inter Boys Erg Test Relationships</strong>
+            </summary>
+            <div className="markdown" style={{ marginTop:8 }}>
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>{mdContent}</ReactMarkdown>
+            </div>
+          </details>
+        </article>
       </div>
     </section>
   )
